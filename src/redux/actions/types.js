@@ -1,0 +1,14 @@
+
+export const MODULE = {
+    ADD: 'MODULE/ADD',
+    GET: 'MODULE/GET',
+    GET_BY_ID: 'MODULE/GET_BY_ID',
+    UPDATE_BY_ID: 'MODULE/UPDATE_BY_ID',
+    DELETE_BY_ID: 'MODULE/DELETE_BY_ID',
+};
+
+export const PHASE = {
+    ADD: 'PHASE/ADD',
+    UPDATE_BY_ID: 'PHASE/UPDATE_BY_ID',
+    DELETE_BY_ID: 'PHASE/DELETE_BY_ID',
+}

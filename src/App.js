@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid'
+import React, { useState, useEffect, useMemo } from 'react';
+import { connect } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
+import styled from 'styled-components'
 import {
   Container,
   Row,
@@ -11,31 +13,100 @@ import {
   ListGroup,
   ListGroupItem,
 } from 'reactstrap';
+import Table from './Table';
 
-const onSubmit = ({lines, text, type}, { setNewLine, cleanForm }) => (e) => {
-  e.preventDefault();
-  const l = [...lines];
-  l.push({ text, type });
-  setNewLine(l);
-  cleanForm();
-}
+import {
+  addModule,
+  getModules,
+  getModuleById,
+  updateModuleById,
+  deleteModuleById,
+} from './redux/actions';
 
-const cleanForm = ({ setText, setType }) => () => {
-  setText('');
-  setType('simple');
-};
+const Styles = styled.div`
+  padding: 1rem;
 
-function App() {
+  table {
+    border-spacing: 0;
+    border: 1px solid black;
+
+    tr {
+      :last-child {
+        td {
+          border-bottom: 0;
+        }
+      }
+    }
+
+    th,
+    td {
+      margin: 0;
+      padding: 0.5rem;
+      border-bottom: 1px solid black;
+      border-right: 1px solid black;
+
+      :last-child {
+        border-right: 0;
+      }
+    }
+  }
+`
+
+const App = (props) => {
   const [lines, setNewLine] = useState([]);
   const [text, setText] = useState('');
   const [type, setType] = useState('simple');
+
+  useEffect(() => {
+    props.getModules();
+  }, []);
+
+  const cleanForm = () => {
+    setText('');
+    setType('simple');
+  };
   
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const l = [...lines];
+    l.push({ text, type });
+    setNewLine(l);
+    cleanForm();
+    props.addModule({ name: text });
+  }
+
+  const columns = useMemo(
+    () => [
+      {
+        Header: 'ID',
+        accessor: '_id',
+      },
+      {
+        Header: 'Name',
+        accessor: 'name',
+      },
+      {
+        Header: 'Phases',
+        accessor: 'phases',
+      },
+      {
+        Header: 'Created At',
+        accessor: 'createdAt',
+      },
+      {
+        Header: 'Updated At',
+        accessor: 'updatedAt',
+      },
+    ],
+    [],
+  );
+  const data = useMemo(() => props.modules, []);
   return (
     <Container>
       <Row>
         <Col>
           <h1>Englis Practice</h1>
-          <Form onSubmit={onSubmit({lines, text, type}, { setNewLine, cleanForm: cleanForm({ setText, setType }) })} inline>
+          <Form onSubmit={onSubmit} inline>
             <FormGroup>
               <Input
                 className="mr-2"
@@ -78,8 +149,29 @@ function App() {
           </ListGroup>
         </Col>
       </Row>
+      <Row>
+        <Col>
+          <h1>Modules</h1>
+          <Styles>
+            <Table columns={columns} data={data} />
+          </Styles>
+        </Col>
+      </Row>
     </Container>
   );
 }
 
-export default App;
+
+const mapStateToProps = ({ modules }) => ({
+  ...modules,
+});
+
+const mapDispatchToProps = {
+  addModule,
+  getModules,
+  getModuleById,
+  updateModuleById,
+  deleteModuleById,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
