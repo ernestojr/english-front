@@ -10,6 +10,7 @@ import Modules from './pages/Modules';
 import ModuleDetail from './pages/ModuleDetail';
 
 export default function BasicExample() {
+  console.log('BASE_URL', process.env);
   return (
     <Router>
       <Switch>

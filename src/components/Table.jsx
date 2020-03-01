@@ -17,7 +17,7 @@ export default ({ columns, data }) => {
 
     // Render the UI for your table
     return (
-      <table {...getTableProps()}>
+      <table {...getTableProps()} >
         <thead>
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>

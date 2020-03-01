@@ -51,7 +51,7 @@ function getById(state, payload) {
         if (payload.error) {
             return { ...state, getting: false, error: payload.error };
         }
-        return { ...state, getting: false, module: payload.module };
+        return { ...state, getting: false, module: payload.response.data };
     }
     return { ...state, getting: true, error: null };
 }

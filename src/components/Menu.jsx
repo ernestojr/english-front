@@ -1,18 +1,17 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
-export default function Menu() {
-	return (
-		<div>
-			<ul>
-				<li>
-					<Link to='/'>Home</Link>
-				</li>
-				<li>
-					<Link to='/modules'>Modules</Link>
-				</li>
-			</ul>
-			<hr />
-		</div>
-	);
-}
+const Menu = () => (
+	<Fragment>
+		<ul>
+			<li>
+				<Link to='/'>Home</Link>
+			</li>
+			<li>
+				<Link to='/modules'>Modules</Link>
+			</li>
+		</ul>
+	</Fragment>
+);
+
+export default Menu;

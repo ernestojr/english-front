@@ -1,12 +1,13 @@
 import React from 'react';
 
-import Menu from '../components/Menu';
+import Base from '../layouts/Base';
 
-export default function Home() {
+const Home = () => {
 	return (
-		<div>
-			<Menu/>
+		<Base>
 			<h2>Home</h2>
-		</div>
+		</Base>
 	);
-}
+};
+
+export default Home;
