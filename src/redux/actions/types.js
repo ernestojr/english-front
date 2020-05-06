@@ -9,6 +9,16 @@ export const MODULE = {
 
 export const PHASE = {
     ADD: 'PHASE/ADD',
+    GET: 'PHASE/GET',
+    GET_BY_ID: 'PHASE/GET_BY_ID',
     UPDATE_BY_ID: 'PHASE/UPDATE_BY_ID',
     DELETE_BY_ID: 'PHASE/DELETE_BY_ID',
-}
+};
+
+export const PRACTICE = {
+    ADD: 'PRACTICE/ADD',
+    GET: 'PRACTICE/GET',
+    GET_BY_ID: 'PRACTICE/GET_BY_ID',
+    UPDATE_BY_ID: 'PRACTICE/UPDATE_BY_ID',
+    DELETE_BY_ID: 'PRACTICE/DELETE_BY_ID',
+};

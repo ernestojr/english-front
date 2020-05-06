@@ -1,5 +1,5 @@
-import API from './axios';
 import QueryString from 'query-string';
+import API from './axios';
 
 export const addModule = (data) => {
     return API.post('/modules', data);
