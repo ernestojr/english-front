@@ -8,6 +8,7 @@ import {
 import Home from './pages/Home';
 import Modules from './pages/Modules';
 import ModuleDetail from './pages/ModuleDetail';
+import PhaseDetail from './pages/PhaseDetail';
 
 export default function BasicExample() {
   console.log('BASE_URL', process.env);
@@ -22,6 +23,9 @@ export default function BasicExample() {
         </Route>
         <Route path="/modules/:id">
           <ModuleDetail />
+        </Route>
+        <Route path="/phases/:id">
+          <PhaseDetail />
         </Route>
       </Switch>
     </Router>
