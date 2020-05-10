@@ -19,26 +19,32 @@ import {
   addModule,
   getModules,
   deleteModuleById,
+  showDialog,
 } from '../redux/actions';
 
 const Module = (props) => {
   const [text, setText] = useState('');
   const history = useHistory();
-
   useEffect(() => {
     props.getModules();
   }, []);
-  
   const onSubmit = async (e) => {
     e.preventDefault();
     await props.addModule({ name: text });
     setText('');
     props.getModules();
   }
-
-  const deleteModel = (item) => async () => {
-    await props.deleteModuleById(item._id);
-    props.getModules();
+  const deleteModel = (item) => () => {
+    const title = 'Confirmación';
+    const content = (<p>{'Are you sure you want to delete the module?'}</p>);
+    const opts = {
+      onAccepted: () => {
+        props.deleteModuleById(item._id, () => {
+          props.getModules();
+        });
+      },
+    };
+    props.showDialog(title, content, opts);
   }
 
   const showModelDetail = (item) => () => {
@@ -126,6 +132,7 @@ const mapDispatchToProps = {
   addModule,
   getModules,
   deleteModuleById,
+  showDialog,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Module);

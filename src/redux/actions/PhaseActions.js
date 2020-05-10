@@ -48,11 +48,14 @@ export const updatePhaseById = (id, data) => async (dispatch) => {
     }
 }
 
-export const deletePhaseById = (id) => async (dispatch) => {
+export const deletePhaseById = (id, cb) => async (dispatch) => {
     dispatch({ type: PHASE.DELETE_BY_ID });
     try {
         const response = await deleteById(id);
         dispatch({ type: PHASE.DELETE_BY_ID, payload: { response } });
+        if(cb) {
+            cb();
+        }
     } catch (error) {
         dispatch({ type: PHASE.DELETE_BY_ID, payload: { error } });
     }

@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import Modules from './pages/Modules';
 import ModuleDetail from './pages/ModuleDetail';
 import PhaseDetail from './pages/PhaseDetail';
+import Dialogs from './components/Dialogs';
 
 export default () => {
   return (
@@ -27,6 +28,7 @@ export default () => {
           <PhaseDetail />
         </Route>
       </Switch>
+      <Dialogs />
     </Router>
   );
 }

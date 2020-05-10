@@ -48,11 +48,14 @@ export const updatePracticeById = (id, data) => async (dispatch) => {
     }
 }
 
-export const deletePracticeById = (id) => async (dispatch) => {
+export const deletePracticeById = (id, cb) => async (dispatch) => {
     dispatch({ type: PRACTICE.DELETE_BY_ID });
     try {
         const response = await deleteById(id);
         dispatch({ type: PRACTICE.DELETE_BY_ID, payload: { response } });
+        if(cb) {
+            cb();
+        }
     } catch (error) {
         dispatch({ type: PRACTICE.DELETE_BY_ID, payload: { error } });
     }

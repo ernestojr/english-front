@@ -21,6 +21,7 @@ import {
   getPhases,
   getModuleById,
   deletePhaseById,
+  showDialog,
 } from '../redux/actions';
 
 const ModuleDetail = (props) => {
@@ -39,9 +40,17 @@ const ModuleDetail = (props) => {
     props.getPhases({ moduleId });
   }
 
-  const deletePhase = (item) => async () => {
-    await props.deletePhaseById(item._id);
-    props.getPhases({ moduleId });
+  const deletePhase = (item) => () => {
+    const title = 'Confirmación';
+    const content = (<p>{'Are you sure you want to delete the phase?'}</p>);
+    const opts = {
+      onAccepted: () => {
+        props.deletePhaseById(item._id, () => {
+          props.getPhases({ moduleId });
+        });
+      },
+    };
+    props.showDialog(title, content, opts);
   }
 
   const showPhaseDetail = (item) => () => {
@@ -134,6 +143,7 @@ const mapDispatchToProps = {
   getPhases,
   getModuleById,
   deletePhaseById,
+  showDialog,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ModuleDetail);

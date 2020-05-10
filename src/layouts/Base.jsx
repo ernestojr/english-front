@@ -34,7 +34,7 @@ const Base = props => {
 				<Breadcrumb>
 					{
 						map(breadcrumbs, ({ to, text }, index) => { 
-							const key =Date.now() + index;
+							const key = Date.now() + index;
 							if (to) {
 								return (
 									<BreadcrumbItem key={key}>

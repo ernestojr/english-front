@@ -22,6 +22,7 @@ import {
   getModuleById,
   getPhaseById,
   deletePracticeById,
+  showDialog,
 } from '../redux/actions';
 
 const PRACTICE_DEFAULT = { content: '', type: 'question' };
@@ -47,8 +48,16 @@ const PhaseDetail = (props) => {
   }
 
   const deletePractice = (item) => async () => {
-    await props.deletePracticeById(item._id);
-    props.getPractices({ phaseId });
+    const title = 'Confirmación';
+    const content = (<p>{'Are you sure you want to delete the practice?'}</p>);
+    const opts = {
+      onAccepted: () => {
+        props.deletePracticeById(item._id, () => {
+          props.getPractices({ phaseId });
+        });
+      },
+    };
+    props.showDialog(title, content, opts);
   }
 
   const getActions = (item) => {
@@ -163,6 +172,7 @@ const mapDispatchToProps = {
   getModuleById,
   getPhaseById,
   deletePracticeById,
+  showDialog,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PhaseDetail);

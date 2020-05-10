@@ -48,11 +48,14 @@ export const updateModuleById = (id, data) => async (dispatch) => {
     }
 }
 
-export const deleteModuleById = (id) => async (dispatch) => {
+export const deleteModuleById = (id, cb) => async (dispatch) => {
     dispatch({ type: MODULE.DELETE_BY_ID });
     try {
         const response = await deleteById(id);
         dispatch({ type: MODULE.DELETE_BY_ID, payload: { response } });
+        if(cb) {
+            cb();
+        }
     } catch (error) {
         dispatch({ type: MODULE.DELETE_BY_ID, payload: { error } });
     }
