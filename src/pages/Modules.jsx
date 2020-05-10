@@ -82,9 +82,14 @@ const Module = (props) => {
     ],
     [],
   );
+  const breadcrumbs = [
+    {
+      text: 'Modules',
+    },
+  ];
   const data = useMemo(() => props.modules, [props.modules]);
   return (
-		<Base>
+		<Base breadcrumbs={breadcrumbs}>
       <Container>
         <Row>
           <Col>

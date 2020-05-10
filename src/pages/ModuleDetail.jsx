@@ -26,7 +26,7 @@ import {
 const ModuleDetail = (props) => {
   const [text, setText] = useState('');
   const history = useHistory();
-  const { id: moduleId } = useParams();
+  const { moduleId } = useParams();
   useEffect(() => {
     props.getModuleById(moduleId);
     props.getPhases({ moduleId });
@@ -45,7 +45,7 @@ const ModuleDetail = (props) => {
   }
 
   const showPhaseDetail = (item) => () => {
-    history.push(`/phases/${item._id}`);
+    history.push(`/modules/${moduleId}/phases/${item._id}`);
   }
 
   const getActions = (item) => {
@@ -56,7 +56,16 @@ const ModuleDetail = (props) => {
       </Fragment>
     );
   }
-
+  const moduleName = get(props, 'module.name', moduleId);
+  const breadcrumbs = [
+    {
+      to: '/modules',
+      text: 'Modules',
+    },
+    {
+      text: moduleName,
+    },
+  ];
   const columns = useMemo(
     () => [
       {
@@ -86,9 +95,8 @@ const ModuleDetail = (props) => {
     [],
   );
   const data = useMemo(() => props.phases, [props.phases]);
-  const moduleName = get(props, 'module.name');
   return (
-    <Base>
+    <Base breadcrumbs={breadcrumbs}>
       <Container>
         <Row>
           <Col>

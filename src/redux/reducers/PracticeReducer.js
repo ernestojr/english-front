@@ -41,7 +41,6 @@ function get(state, payload) {
         if (payload.error) {
             return { ...state, getting: false, error: payload.error };
         }
-        console.log('payload.response.data', payload.response.data);
         return { ...state, getting: false, practices: payload.response.data };
     }
     return { ...state, getting: true, error: null };

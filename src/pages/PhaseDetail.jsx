@@ -19,6 +19,7 @@ import Base from '../layouts/Base';
 import {
   addPractice,
   getPractices,
+  getModuleById,
   getPhaseById,
   deletePracticeById,
 } from '../redux/actions';
@@ -30,10 +31,10 @@ const TYPE_OPTIONS = [
   { value: 'answer', text: 'Answer' },
 ];
 const PhaseDetail = (props) => {
-  console.log('props', props);
   const [practice, setPractice] = useState(PRACTICE_DEFAULT);
-  const { id: phaseId } = useParams();
+  const { moduleId, phaseId } = useParams();
   useEffect(() => {
+    props.getModuleById(moduleId);
     props.getPhaseById(phaseId);
     props.getPractices({ phaseId });
   }, []);
@@ -90,10 +91,24 @@ const PhaseDetail = (props) => {
     ],
     [],
   );
-  const data = useMemo(() => props.practices, [props.practices]);
+  const moduleName = get(props, 'module.name', moduleId);
   const phaseName = get(props, 'phase.name');
+  const breadcrumbs = [
+    {
+      to: '/modules',
+      text: 'Modules',
+    },
+    {
+      to: `/modules/${moduleId}`,
+      text: moduleName,
+    },
+    {
+      text: phaseName,
+    },
+  ];
+  const data = useMemo(() => props.practices, [props.practices]);
   return (
-    <Base>
+    <Base breadcrumbs={breadcrumbs}>
       <Container>
         <Row>
           <Col>
@@ -122,7 +137,7 @@ const PhaseDetail = (props) => {
                   onChange={e => setPractice({ ...practice, type: e.target.value})}
                 >
                   {
-                    TYPE_OPTIONS.map(opt => <option value={opt.value}>{opt.text}</option>)
+                    TYPE_OPTIONS.map((opt, index) => <option key={Date.now() + index} value={opt.value}>{opt.text}</option>)
                   }
                 </Input>
               </FormGroup>
@@ -136,14 +151,16 @@ const PhaseDetail = (props) => {
   );
 }
 
-const mapStateToProps = ({ phases, practices }) => ({
+const mapStateToProps = ({ modules, phases, practices }) => ({
   ...practices,
+  module: modules.module,
   phase: phases.phase,
 });
 
 const mapDispatchToProps = {
   addPractice,
   getPractices,
+  getModuleById,
   getPhaseById,
   deletePracticeById,
 };

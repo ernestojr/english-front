@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import map from 'lodash/map';
 import {
   Collapse,
   Navbar,
@@ -15,7 +16,7 @@ import Menu from '../components/Menu';
 const Base = props => {
 	const [isOpen, setIsOpen] = useState(false);
 	const toggle = () => setIsOpen(!isOpen);
-	console.log('search', useLocation());
+	const { breadcrumbs = [] } = props;
 	return (
 		<Fragment>
 			<Navbar color="dark" dark expand="md">
@@ -28,6 +29,28 @@ const Base = props => {
 					<NavbarText><a href="https://github.com/ernestojr">GitHub</a></NavbarText>
         </Collapse>
       </Navbar>
+			{
+				breadcrumbs.length &&
+				<Breadcrumb>
+					{
+						map(breadcrumbs, ({ to, text }, index) => { 
+							const key =Date.now() + index;
+							if (to) {
+								return (
+									<BreadcrumbItem key={key}>
+										<Link to={to}>{text}</Link>
+									</BreadcrumbItem>
+								);
+							}
+							return (
+								<BreadcrumbItem key={key} active>
+									{text}
+								</BreadcrumbItem>
+							);
+						})
+					}
+				</Breadcrumb>
+			}
 			<section>{ props.children }</section>
 		</Fragment>
 	);
