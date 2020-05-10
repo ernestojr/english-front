@@ -1,16 +1,17 @@
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  NavItem,
+} from 'reactstrap';
 
 const Menu = () => (
 	<Fragment>
-		<ul>
-			<li>
-				<Link to='/'>Home</Link>
-			</li>
-			<li>
-				<Link to='/modules'>Modules</Link>
-			</li>
-		</ul>
+		<NavItem>
+			<Link className="nav-link" to='/'>Home</Link>
+		</NavItem>
+		<NavItem>
+			<Link className="nav-link" to='/modules'>Modules</Link>
+		</NavItem>
 	</Fragment>
 );
 
