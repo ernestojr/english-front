@@ -60,7 +60,7 @@ const ModuleDetail = (props) => {
   const getActions = (item) => {
     return (
       <Fragment>
-        <Button className="mr-2" outline color="primary" size="sm" onClick={showPhaseDetail(item)}>Show</Button>
+        <Button className="mr-2" outline color="primary" size="sm" onClick={showPhaseDetail(item)}>Practices</Button>
         <Button className="mr-2" outline color="danger" size="sm" onClick={deletePhase(item)}>Delete</Button>
       </Fragment>
     );

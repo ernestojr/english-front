@@ -25,9 +25,10 @@ import {
   showDialog,
 } from '../redux/actions';
 
-const PRACTICE_DEFAULT = { content: '', type: 'question' };
+const PRACTICE_DEFAULT = { content: '', type: 'simple' };
 
 const TYPE_OPTIONS = [
+  { value: 'simple', text: 'Simple' },
   { value: 'question', text: 'Question' },
   { value: 'answer', text: 'Answer' },
 ];
