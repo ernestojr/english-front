@@ -12,27 +12,46 @@ import {
   Input,
 } from 'reactstrap';
 
-import Table from '../components/Table';
-import Base from '../layouts/Base';
+import Table from '../../components/Table';
+import Base from '../../layouts/Base';
+import ModuleForm from './ModuleForm';
 
 import {
   addModule,
   getModules,
   deleteModuleById,
   showDialog,
-} from '../redux/actions';
+} from '../../redux/actions';
+
+const MODULE_DEFAULT = { name: '', description: '' };
 
 const Module = (props) => {
-  const [text, setText] = useState('');
+  const [module, setModule] = useState(MODULE_DEFAULT);
   const history = useHistory();
   useEffect(() => {
     props.getModules();
   }, []);
   const onSubmit = async (e) => {
     e.preventDefault();
-    await props.addModule({ name: text });
-    setText('');
+    await props.addModule({ name: module.text });
+    setModule('');
     props.getModules();
+  }
+  const onChange = key => event => {
+    const data = { ...module };
+    data[key] = event.target.value;
+    console.log('Here onChange', data);
+    setModule(data);
+  }
+  const onAddNewClick = () => {
+    const title = 'New Module';
+    const content = (<ModuleForm value={module} onChange={onChange}/>);
+    const opts = {
+      onAccepted: () => {
+        console.log('Here');
+      },
+    };
+    props.showDialog(title, content, opts);
   }
   const deleteModel = (item) => () => {
     const title = 'Confirmación';
@@ -108,13 +127,14 @@ const Module = (props) => {
                   name="module-name"
                   id="module-name"
                   placeholder="Module name"
-                  value={text}
+                  value={module.text}
                   required
-                  onChange={e => setText(e.target.value)}
+                  onChange={e => setModule(e.target.value)}
                 />
               </FormGroup>
               <Button color="success" type="submit">Save</Button>
             </Form>
+            <Button color="success" type="button" onClick={onAddNewClick}>+</Button>
             <Table columns={columns} data={data} />
           </Col>
         </Row>
