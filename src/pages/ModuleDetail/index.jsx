@@ -8,13 +8,13 @@ import {
   Row,
   Col,
   Button,
-  Form,
-  FormGroup,
-  Input,
 } from 'reactstrap';
 
-import Table from '../components/Table';
-import Base from '../layouts/Base';
+import Table from '../../components/Table';
+import HeaderPage from '../../components/HeaderPage';
+import DialogForm from '../../components/DialogForm';
+import Base from '../../layouts/Base';
+import PhaseForm from './PhaseForm';
 
 import {
   addPhase,
@@ -22,24 +22,32 @@ import {
   getModuleById,
   deletePhaseById,
   showDialog,
-} from '../redux/actions';
+} from '../../redux/actions';
+
+const PHASE_DEFAULT = { name: '', description: '' };
 
 const ModuleDetail = (props) => {
-  const [text, setText] = useState('');
+  const [phase, setPhase] = useState(PHASE_DEFAULT);
+  const [isOpen, showModalFrom] = useState(false);
   const history = useHistory();
   const { moduleId } = useParams();
   useEffect(() => {
     props.getModuleById(moduleId);
     props.getPhases({ moduleId });
   }, []);
-  
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    await props.addPhase({ name: text, moduleId });
-    setText('');
-    props.getPhases({ moduleId });
+  const onChange = key => event => {
+    setPhase({ ...phase, [key]: event.target.value  });
   }
-
+  const onButtonClick = () => {
+    showModalFrom(true);
+  }
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    await props.addPhase({ ...phase, moduleId });
+    setPhase(PHASE_DEFAULT);
+    showModalFrom(false);
+    props.getPhases({ moduleId });
+  };
   const deletePhase = (item) => () => {
     const title = 'Confirmación';
     const content = (<p>{'Are you sure you want to delete the phase?'}</p>);
@@ -52,11 +60,9 @@ const ModuleDetail = (props) => {
     };
     props.showDialog(title, content, opts);
   }
-
   const showPhaseDetail = (item) => () => {
     history.push(`/modules/${moduleId}/phases/${item._id}`);
   }
-
   const getActions = (item) => {
     return (
       <Fragment>
@@ -65,16 +71,6 @@ const ModuleDetail = (props) => {
       </Fragment>
     );
   }
-  const moduleName = get(props, 'module.name', moduleId);
-  const breadcrumbs = [
-    {
-      to: '/modules',
-      text: 'Modules',
-    },
-    {
-      text: moduleName,
-    },
-  ];
   const columns = useMemo(
     () => [
       {
@@ -103,29 +99,34 @@ const ModuleDetail = (props) => {
     ],
     [],
   );
+  const moduleName = get(props, 'module.name', moduleId);
+  const breadcrumbs = [
+    {
+      to: '/modules',
+      text: 'Modules',
+    },
+    {
+      text: moduleName,
+    },
+  ];
   const data = useMemo(() => props.phases, [props.phases]);
   return (
     <Base breadcrumbs={breadcrumbs}>
       <Container>
         <Row>
           <Col>
-            <h1>Module {moduleName}</h1>
-            <Form className="mb-3" onSubmit={onSubmit} inline>
-              <FormGroup>
-                <Input
-                  className="mr-2"
-                  type="text"
-                  name="module-name"
-                  id="module-name"
-                  placeholder="Phase name"
-                  value={text}
-                  required
-                  onChange={e => setText(e.target.value)}
-                />
-              </FormGroup>
-              <Button color="success" type="submit">Save</Button>
-            </Form>
+            <HeaderPage
+              headerText={`Modules ${moduleName}`}
+              buttonText="New Phase"
+              onButtonClickButton={onButtonClick} />
             <Table columns={columns} data={data} />
+            <DialogForm
+              isOpen={isOpen}
+              title="New Phase"
+              toggle={() => showModalFrom(false)}
+              onSubmit={onSubmit}>
+              <PhaseForm value={phase} onChange={onChange}/>
+            </DialogForm>
           </Col>
         </Row>
       </Container>

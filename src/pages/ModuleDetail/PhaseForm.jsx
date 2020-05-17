@@ -9,24 +9,24 @@ export default (props) => {
   return (
     <Fragment>
       <FormGroup>
-        <Label for="module-name">Name</Label>
+        <Label for="phase-name">Name</Label>
         <Input
           type="text"
-          name="module-name"
-          id="module-name"
-          placeholder="Module name"
+          name="phase-name"
+          id="phase-name"
+          placeholder="Phase name"
           value={props.value.name}
           required
           onChange={props.onChange('name')}
         />
       </FormGroup>
       <FormGroup>
-        <Label for="module-description">Description</Label>
+        <Label for="phase-description">Description</Label>
         <Input
           type="textarea"
-          name="module-description"
-          id="module-description"
-          placeholder="Module description"
+          name="phase-description"
+          id="phase-description"
+          placeholder="Phase description"
           value={props.value.description}
           required
           onChange={props.onChange('description')}

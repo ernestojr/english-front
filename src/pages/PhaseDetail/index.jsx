@@ -13,8 +13,10 @@ import {
   Input,
 } from 'reactstrap';
 
-import Table from '../components/Table';
-import Base from '../layouts/Base';
+import Table from '../../components/Table';
+import HeaderPage from '../../components/HeaderPage';
+import Base from '../../layouts/Base';
+import PracticeForm from './PracticeForm';
 
 import {
   addPractice,
@@ -23,17 +25,13 @@ import {
   getPhaseById,
   deletePracticeById,
   showDialog,
-} from '../redux/actions';
+} from '../../redux/actions';
 
 const PRACTICE_DEFAULT = { content: '', type: 'simple' };
 
-const TYPE_OPTIONS = [
-  { value: 'simple', text: 'Simple' },
-  { value: 'question', text: 'Question' },
-  { value: 'answer', text: 'Answer' },
-];
 const PhaseDetail = (props) => {
   const [practice, setPractice] = useState(PRACTICE_DEFAULT);
+  const [isOpen, showForm] = useState(false);
   const { moduleId, phaseId } = useParams();
   useEffect(() => {
     props.getModuleById(moduleId);
@@ -44,6 +42,7 @@ const PhaseDetail = (props) => {
   const onSubmit = async (e) => {
     e.preventDefault();
     await props.addPractice({ ...practice, phaseId });
+    showForm(false);
     setPractice(PRACTICE_DEFAULT);
     props.getPractices({ phaseId });
   }
@@ -68,7 +67,16 @@ const PhaseDetail = (props) => {
       </Fragment>
     );
   }
-
+  const onButtonClick = () => {
+    showForm(true);
+  }
+  const onChange = key => event => {
+    setPractice({ ...practice, [key]: event.target.value });
+  }
+  const onCancelClick = () => {
+    showForm(false);
+    setPractice(PRACTICE_DEFAULT);
+  }
   const columns = useMemo(
     () => [
       {
@@ -102,7 +110,7 @@ const PhaseDetail = (props) => {
     [],
   );
   const moduleName = get(props, 'module.name', moduleId);
-  const phaseName = get(props, 'phase.name');
+  const phaseName = get(props, 'phase.name', phaseId);
   const breadcrumbs = [
     {
       to: '/modules',
@@ -122,37 +130,18 @@ const PhaseDetail = (props) => {
       <Container>
         <Row>
           <Col>
-            <h1>Phase {phaseName}</h1>
-            <Form className="mb-3" onSubmit={onSubmit} inline>
-              <FormGroup>
-                <Input
-                  className="mr-2"
-                  type="content"
-                  name="content"
-                  id="content"
-                  placeholder="Practice"
-                  value={practice.content}
-                  required
-                  onChange={e => setPractice({ ...practice, content: e.target.value})}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Input
-                  className="mr-2"
-                  type="select"
-                  name="type"
-                  id="type"
-                  value={practice.type}
-                  required
-                  onChange={e => setPractice({ ...practice, type: e.target.value})}
-                >
-                  {
-                    TYPE_OPTIONS.map((opt, index) => <option key={Date.now() + index} value={opt.value}>{opt.text}</option>)
-                  }
-                </Input>
-              </FormGroup>
-              <Button color="success" type="submit">Save</Button>
-            </Form>
+            <HeaderPage
+              headerText={`Phase ${phaseName}`}
+              buttonText="New Practice"
+              onButtonClickButton={onButtonClick} />
+            {
+              isOpen &&
+              <PracticeForm
+                onSubmit={onSubmit}
+                value={practice}
+                onChange={onChange}
+                onCancelClick={onCancelClick}/>
+            }
             <Table columns={columns} data={data} />
           </Col>
         </Row>

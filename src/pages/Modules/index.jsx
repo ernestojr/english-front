@@ -7,12 +7,11 @@ import {
   Row,
   Col,
   Button,
-  Form,
-  FormGroup,
-  Input,
 } from 'reactstrap';
 
 import Table from '../../components/Table';
+import HeaderPage from '../../components/HeaderPage';
+import DialogForm from '../../components/DialogForm';
 import Base from '../../layouts/Base';
 import ModuleForm from './ModuleForm';
 
@@ -27,32 +26,24 @@ const MODULE_DEFAULT = { name: '', description: '' };
 
 const Module = (props) => {
   const [module, setModule] = useState(MODULE_DEFAULT);
+  const [isOpen, showModalFrom] = useState(false);
   const history = useHistory();
   useEffect(() => {
     props.getModules();
   }, []);
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    await props.addModule({ name: module.text });
-    setModule('');
-    props.getModules();
-  }
   const onChange = key => event => {
-    const data = { ...module };
-    data[key] = event.target.value;
-    console.log('Here onChange', data);
-    setModule(data);
+    setModule({ ...module, [key]: event.target.value  });
   }
-  const onAddNewClick = () => {
-    const title = 'New Module';
-    const content = (<ModuleForm value={module} onChange={onChange}/>);
-    const opts = {
-      onAccepted: () => {
-        console.log('Here');
-      },
-    };
-    props.showDialog(title, content, opts);
+  const onButtonClick = () => {
+    showModalFrom(true);
   }
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    await props.addModule(module);
+    setModule(MODULE_DEFAULT);
+    showModalFrom(false);
+    props.getModules();
+  };
   const deleteModel = (item) => () => {
     const title = 'Confirmación';
     const content = (<p>{'Are you sure you want to delete the module?'}</p>);
@@ -65,11 +56,9 @@ const Module = (props) => {
     };
     props.showDialog(title, content, opts);
   }
-
   const showModelDetail = (item) => () => {
     history.push(`/modules/${item._id}`);
   }
-
   const getActions = (item) => {
     return (
       <Fragment>
@@ -78,7 +67,6 @@ const Module = (props) => {
       </Fragment>
     );
   }
-
   const columns = useMemo(
     () => [
       {
@@ -118,24 +106,19 @@ const Module = (props) => {
       <Container>
         <Row>
           <Col>
-            <h1>Modules</h1>
-            <Form className="mb-3" onSubmit={onSubmit} inline>
-              <FormGroup>
-                <Input
-                  className="mr-2"
-                  type="text"
-                  name="module-name"
-                  id="module-name"
-                  placeholder="Module name"
-                  value={module.text}
-                  required
-                  onChange={e => setModule(e.target.value)}
-                />
-              </FormGroup>
-              <Button color="success" type="submit">Save</Button>
-            </Form>
-            <Button color="success" type="button" onClick={onAddNewClick}>+</Button>
+            <HeaderPage
+              headerText="Modules"
+              buttonText="New Module"
+              onButtonClickButton={onButtonClick}
+            />
             <Table columns={columns} data={data} />
+            <DialogForm
+              isOpen={isOpen}
+              title="New Module"
+              toggle={() => showModalFrom(false)}
+              onSubmit={onSubmit}>
+              <ModuleForm value={module} onChange={onChange}/>
+            </DialogForm>
           </Col>
         </Row>
       </Container>

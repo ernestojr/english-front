@@ -56,16 +56,17 @@ class Dialog extends React.Component {
         </ModalBody>
         <ModalFooter>
           <Button
-            color="primary"
-            onClick={() => this.toggle(true)}
-            hidden={this.props.opts.acceptedButton === false }>
-            { this.props.opts.positiveText || 'Accept' }
-          </Button>{' '}
-          <Button
+            className="mr-2"
             color="secondary"
             onClick={() => this.toggle()}
             hidden={this.props.opts.canceledButton === false }>
             { this.props.opts.negativeText || 'Cancel' }
+          </Button>
+          <Button
+            color="primary"
+            onClick={() => this.toggle(true)}
+            hidden={this.props.opts.acceptedButton === false }>
+            { this.props.opts.positiveText || 'Accept' }
           </Button>
         </ModalFooter>
       </Modal>
