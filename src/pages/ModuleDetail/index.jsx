@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import moment from 'moment';
 import get from 'lodash/get';
+import pick from 'lodash/pick';
 import {
   Container,
   Row,
@@ -71,29 +72,28 @@ const ModuleDetail = (props) => {
       </Fragment>
     );
   }
-  const columns = useMemo(
+  const onChangePage = page => {
+    props.getPhases({ moduleId, page });
+  }
+  const headers = useMemo(
     () => [
       {
-        Header: 'ID',
-        accessor: '_id',
-      },
-      {
-        Header: 'Name',
+        title: 'Name',
         accessor: 'name',
       },
       {
-        Header: 'Created At',
-        id: 'createdAt',
+        title: 'Created At',
+        key: 'createdAt',
         accessor: (item) => moment(item.createdAt).format('DD/MM/YYYY'),
       },
       {
-        Header: 'Updated At',
-        id: 'updatedAt',
+        title: 'Updated At',
+        key: 'updatedAt',
         accessor: (item) => moment(item.updatedAt).format('DD/MM/YYYY'),
       },
       {
-        Header: 'Actions',
-        id: 'actions',
+        title: 'Actions',
+        key: 'actions',
         accessor: (item) => getActions(item),
       },
     ],
@@ -119,7 +119,11 @@ const ModuleDetail = (props) => {
               headerText={`Modules ${moduleName}`}
               buttonText="New Phase"
               onButtonClickButton={onButtonClick} />
-            <Table columns={columns} data={data} />
+            <Table
+              headers={headers}
+              data={data}
+              onChangePage={onChangePage}
+              {...pick(props, ['page', 'count', 'limit'])} />
             <DialogForm
               isOpen={isOpen}
               title="New Phase"

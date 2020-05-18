@@ -3,14 +3,12 @@ import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import get from 'lodash/get';
+import pick from 'lodash/pick';
 import {
   Container,
   Row,
   Col,
   Button,
-  Form,
-  FormGroup,
-  Input,
 } from 'reactstrap';
 
 import Table from '../../components/Table';
@@ -38,7 +36,6 @@ const PhaseDetail = (props) => {
     props.getPhaseById(phaseId);
     props.getPractices({ phaseId });
   }, []);
-  
   const onSubmit = async (e) => {
     e.preventDefault();
     await props.addPractice({ ...practice, phaseId });
@@ -46,7 +43,6 @@ const PhaseDetail = (props) => {
     setPractice(PRACTICE_DEFAULT);
     props.getPractices({ phaseId });
   }
-
   const deletePractice = (item) => async () => {
     const title = 'Confirmación';
     const content = (<p>{'Are you sure you want to delete the practice?'}</p>);
@@ -59,7 +55,6 @@ const PhaseDetail = (props) => {
     };
     props.showDialog(title, content, opts);
   }
-
   const getActions = (item) => {
     return (
       <Fragment>
@@ -77,33 +72,32 @@ const PhaseDetail = (props) => {
     showForm(false);
     setPractice(PRACTICE_DEFAULT);
   }
-  const columns = useMemo(
+  const onChangePage = page => {
+    props.getPractices({ phaseId, page });
+  }
+  const headers = useMemo(
     () => [
       {
-        Header: 'ID',
-        accessor: '_id',
-      },
-      {
-        Header: 'Text',
+        title: 'Text',
         accessor: 'content',
       },
       {
-        Header: 'Type',
+        title: 'Type',
         accessor: 'type',
       },
       {
-        Header: 'Created At',
-        id: 'createdAt',
+        title: 'Created At',
+        key: 'createdAt',
         accessor: (item) => moment(item.createdAt).format('DD/MM/YYYY'),
       },
       {
-        Header: 'Updated At',
-        id: 'updatedAt',
+        title: 'Updated At',
+        key: 'updatedAt',
         accessor: (item) => moment(item.updatedAt).format('DD/MM/YYYY'),
       },
       {
-        Header: 'Actions',
-        id: 'actions',
+        title: 'Actions',
+        key: 'actions',
         accessor: (item) => getActions(item),
       },
     ],
@@ -142,7 +136,11 @@ const PhaseDetail = (props) => {
                 onChange={onChange}
                 onCancelClick={onCancelClick}/>
             }
-            <Table columns={columns} data={data} />
+            <Table
+              headers={headers}
+              data={data}
+              onChangePage={onChangePage}
+              {...pick(props, ['page', 'count', 'limit'])} />
           </Col>
         </Row>
       </Container>

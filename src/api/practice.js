@@ -1,12 +1,13 @@
 import QueryString from 'query-string';
 import API from './axios';
+import { PAGINATION_LIMIT } from '../constants/api';
 
 export const addPractice = (data) => {
     return API.post('/practices', data);
 }
 
 export const getPractices = (query) => {
-    return API.get(`/practices?${QueryString.stringify(query)}`);
+    return API.get(`/practices?${QueryString.stringify({limit: PAGINATION_LIMIT, ...query})}`);
 }
 
 export const getPracticeById = (id) => {

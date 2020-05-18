@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
+import pick from 'lodash/pick';
 import {
   Container,
   Row,
@@ -59,6 +60,9 @@ const Module = (props) => {
   const showModelDetail = (item) => () => {
     history.push(`/modules/${item._id}`);
   }
+  const onChangePage = page => {
+    props.getModules({ page });
+  }
   const getActions = (item) => {
     return (
       <Fragment>
@@ -67,29 +71,25 @@ const Module = (props) => {
       </Fragment>
     );
   }
-  const columns = useMemo(
+  const headers = useMemo(
     () => [
       {
-        Header: 'ID',
-        accessor: '_id',
-      },
-      {
-        Header: 'Name',
+        title: 'Name',
         accessor: 'name',
       },
       {
-        Header: 'Created At',
-        id: 'createdAt',
+        title: 'Created At',
+        key: 'createdAt',
         accessor: (item) => moment(item.createdAt).format('DD/MM/YYYY'),
       },
       {
-        Header: 'Updated At',
-        id: 'updatedAt',
+        title: 'Updated At',
+        key: 'updatedAt',
         accessor: (item) => moment(item.updatedAt).format('DD/MM/YYYY'),
       },
       {
-        Header: 'Actions',
-        id: 'actions',
+        title: 'Actions',
+        key: 'actions',
         accessor: (item) => getActions(item),
       },
     ],
@@ -111,7 +111,11 @@ const Module = (props) => {
               buttonText="New Module"
               onButtonClickButton={onButtonClick}
             />
-            <Table columns={columns} data={data} />
+            <Table
+              headers={headers}
+              data={data}
+              onChangePage={onChangePage}
+              {...pick(props, ['page', 'count', 'limit'])} />
             <DialogForm
               isOpen={isOpen}
               title="New Module"

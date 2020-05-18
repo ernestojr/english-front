@@ -1,6 +1,14 @@
 import { PRACTICE } from '../actions/types';
+import {
+    HEADER_PAGINATION_LIMIT,
+    HEADER_PAGINATION_PAGE,
+    HEADER_PAGINATION_TOTAL_COUNT,
+} from '../../constants/api';
 
 const initialState = {
+    page: 1,
+    count: 0,
+    limit: 0,
     practices: [],
     practice: null,
     adding: false,
@@ -41,7 +49,15 @@ function get(state, payload) {
         if (payload.error) {
             return { ...state, getting: false, error: payload.error };
         }
-        return { ...state, getting: false, practices: payload.response.data };
+        const { headers, data } = payload.response;
+        return {
+            ...state,
+            getting: false,
+            limit: headers[HEADER_PAGINATION_LIMIT],
+            page: headers[HEADER_PAGINATION_PAGE],
+            count: headers[HEADER_PAGINATION_TOTAL_COUNT],
+            practices: data,
+        };
     }
     return { ...state, getting: true, error: null };
 }

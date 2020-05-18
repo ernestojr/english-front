@@ -1,73 +1,59 @@
+import React, { Fragment } from 'react';
+import {
+  Table,
+} from 'reactstrap';
+import map from 'lodash/map';
+import Pagination from "react-js-pagination";
 
-import React from 'react';
-import { useTable } from 'react-table';
-import styled from 'styled-components';
-
-const Styles = styled.div`
-  table {
-    border-spacing: 0;
-    border: 1px solid black;
-    width: 100%;
-    tr {
-      :last-child {
-        td {
-          border-bottom: 0;
-        }
-      }
-    }
-    th,
-    td {
-      margin: 0;
-      padding: 0.5rem;
-      border-bottom: 1px solid black;
-      border-right: 1px solid black;
-      :last-child {
-        border-right: 0;
-      }
-    }
+function getContent({ accessor }, data) {
+  if (typeof accessor === 'function') {
+    return accessor(data);
   }
-`;
+  return data[accessor];
+}
 
-export default ({ columns, data }) => {
-    // Use the state and functions returned from useTable to build your UI
-    const {
-      getTableProps,
-      getTableBodyProps,
-      headerGroups,
-      rows,
-      prepareRow,
-    } = useTable({
-      columns,
-      data,
-    });
-
-    // Render the UI for your table
-    return (
-      <Styles>
-        <table {...getTableProps()} >
-          <thead>
-            {headerGroups.map(headerGroup => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-                ))}
+export default (props) => {
+  const {
+    page,
+    count,
+    limit,
+    onChangePage,
+    headers = [],
+    data = [],
+  } = props;
+  return (
+    <Fragment>
+      <Table striped bordered responsive>
+        <thead>
+          <tr>
+            {
+              map(headers, (hdr) => <th key={`${Date.now()}-${hdr.key || hdr.accessor}`}>{hdr.title}</th>)
+            }
+          </tr>
+        </thead>
+        <tbody>
+          {
+            map(data, (item, index) => (
+              <tr key={`${Date.now()}-${index}`}>
+                {
+                  map(headers, hdr => (
+                    <td key={`${Date.now()}-${hdr.key || hdr.accessor}-${index}`}>{getContent(hdr, item)}</td>
+                  ))
+                }
               </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              prepareRow(row)
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map(cell => {
-                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                  })}
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </Styles>
-    );
-  };
+            ))
+          }
+        </tbody>
+      </Table>
+      <Pagination
+          activePage={parseInt(page, 10)}
+          itemsCountPerPage={parseInt(limit, 10)}
+          totalItemsCount={parseInt(count, 10)}
+          pageRangeDisplayed={5}
+          onChange={onChangePage}
+          itemClass="page-item"
+          linkClass="page-link" />
+    </Fragment>
+  );
+};
   
