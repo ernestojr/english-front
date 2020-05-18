@@ -13,36 +13,58 @@ import {
 
 import Table from '../../components/Table';
 import HeaderPage from '../../components/HeaderPage';
+import DialogForm from '../../components/DialogForm';
 import Base from '../../layouts/Base';
 import PracticeForm from './PracticeForm';
+import PhaseForm from '../ModuleDetail/PhaseForm';
 
 import {
   addPractice,
   getPractices,
   getModuleById,
   getPhaseById,
+  updatePhaseById,
+  updatePracticeById,
   deletePracticeById,
   showDialog,
 } from '../../redux/actions';
 
 const PRACTICE_DEFAULT = { content: '', type: 'simple' };
+const PHASE_DEFAULT = { name: '', description: '' };
 
 const PhaseDetail = (props) => {
+  const [phase, setPhase] = useState(PHASE_DEFAULT);
   const [practice, setPractice] = useState(PRACTICE_DEFAULT);
   const [isOpen, showForm] = useState(false);
+  const [isOpenModal, showModalFrom] = useState(false);
   const { moduleId, phaseId } = useParams();
   useEffect(() => {
     props.getModuleById(moduleId);
     props.getPhaseById(phaseId);
     props.getPractices({ phaseId });
   }, []);
+  const onSubmitEditPhase = async (e) => {
+    e.preventDefault();
+    await props.updatePhaseById(phase._id, {...pick(phase, ['name', 'description'])});
+    showModalFrom(false);
+    setPhase(PHASE_DEFAULT);
+    props.getPhaseById(phaseId);
+  };
   const onSubmit = async (e) => {
     e.preventDefault();
-    await props.addPractice({ ...practice, phaseId });
+    if (practice._id) {
+      await props.updatePracticeById(practice._id, {...pick(practice, ['content', 'type'])});
+    } else {
+      await props.addPractice({ ...practice, phaseId });
+    }
     showForm(false);
     setPractice(PRACTICE_DEFAULT);
     props.getPractices({ phaseId });
   }
+  const updatePractice = (item) => async () => {
+    setPractice(item);
+    showForm(true);
+  };
   const deletePractice = (item) => async () => {
     const title = 'Confirmación';
     const content = (<p>{'Are you sure you want to delete the practice?'}</p>);
@@ -58,12 +80,20 @@ const PhaseDetail = (props) => {
   const getActions = (item) => {
     return (
       <Fragment>
-        <Button className="mr-2" outline color="danger" size="sm" onClick={deletePractice(item)}>Delete</Button>
+        <Button className="mr-2" outline color="primary" size="sm" onClick={updatePractice(item)}>Update</Button>
+        <Button outline color="danger" size="sm" onClick={deletePractice(item)}>Delete</Button>
       </Fragment>
     );
   }
   const onButtonClick = () => {
     showForm(true);
+  }
+  const onButtonClickEditPhase = () => {
+    setPhase(props.phase);
+    showModalFrom(true);
+  }
+  const onChangePhase = key => event => {
+    setPhase({ ...phase, [key]: event.target.value });
   }
   const onChange = key => event => {
     setPractice({ ...practice, [key]: event.target.value });
@@ -103,8 +133,9 @@ const PhaseDetail = (props) => {
     ],
     [],
   );
-  const moduleName = get(props, 'module.name', moduleId);
-  const phaseName = get(props, 'phase.name', phaseId);
+  const moduleName = get(props, 'module.name', '');
+  const phaseName = get(props, 'phase.name', '');
+  const phaseDescription = get(props, 'phase.description', '');
   const breadcrumbs = [
     {
       to: '/modules',
@@ -126,8 +157,11 @@ const PhaseDetail = (props) => {
           <Col>
             <HeaderPage
               headerText={`Phase ${phaseName}`}
-              buttonText="New Practice"
-              onButtonClickButton={onButtonClick} />
+              buttonTextEdit="Edit Phase"
+              onButtonClickEdit={onButtonClickEditPhase}
+              buttonTextNew="New Practice"
+              onButtonClickNew={onButtonClick} />
+            <p>{phaseDescription}</p>
             {
               isOpen &&
               <PracticeForm
@@ -141,6 +175,13 @@ const PhaseDetail = (props) => {
               data={data}
               onChangePage={onChangePage}
               {...pick(props, ['page', 'count', 'limit'])} />
+            <DialogForm
+              isOpen={isOpenModal}
+              title="New Phase"
+              toggle={() => showModalFrom(false)}
+              onSubmit={onSubmitEditPhase}>
+              <PhaseForm value={phase} onChange={onChangePhase}/>
+            </DialogForm>
           </Col>
         </Row>
       </Container>
@@ -159,6 +200,8 @@ const mapDispatchToProps = {
   getPractices,
   getModuleById,
   getPhaseById,
+  updatePhaseById,
+  updatePracticeById,
   deletePracticeById,
   showDialog,
 };

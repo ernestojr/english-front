@@ -78,6 +78,10 @@ const Module = (props) => {
         accessor: 'name',
       },
       {
+        title: 'Description',
+        accessor: 'description',
+      },
+      {
         title: 'Created At',
         key: 'createdAt',
         accessor: (item) => moment(item.createdAt).format('DD/MM/YYYY'),
@@ -108,8 +112,8 @@ const Module = (props) => {
           <Col>
             <HeaderPage
               headerText="Modules"
-              buttonText="New Module"
-              onButtonClickButton={onButtonClick}
+              buttonTextNew="New Module"
+              onButtonClickNew={onButtonClick}
             />
             <Table
               headers={headers}

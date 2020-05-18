@@ -82,6 +82,10 @@ const ModuleDetail = (props) => {
         accessor: 'name',
       },
       {
+        title: 'Description',
+        accessor: 'description',
+      },
+      {
         title: 'Created At',
         key: 'createdAt',
         accessor: (item) => moment(item.createdAt).format('DD/MM/YYYY'),
@@ -99,7 +103,8 @@ const ModuleDetail = (props) => {
     ],
     [],
   );
-  const moduleName = get(props, 'module.name', moduleId);
+  const moduleName = get(props, 'module.name', '');
+  const moduleDescription = get(props, 'module.description', '');
   const breadcrumbs = [
     {
       to: '/modules',
@@ -117,8 +122,9 @@ const ModuleDetail = (props) => {
           <Col>
             <HeaderPage
               headerText={`Modules ${moduleName}`}
-              buttonText="New Phase"
-              onButtonClickButton={onButtonClick} />
+              buttonTextNew="New Phase"
+              onButtonClickNew={onButtonClick} />
+            <p>{moduleDescription}</p>
             <Table
               headers={headers}
               data={data}
