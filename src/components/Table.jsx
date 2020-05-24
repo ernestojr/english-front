@@ -33,6 +33,12 @@ export default (props) => {
         </thead>
         <tbody>
           {
+            !data.length &&
+            <tr>
+              <td className="text-center" colspan="5">Nothing yet</td>
+            </tr>
+          }
+          {
             map(data, (item, index) => (
               <tr key={`${Date.now()}-${index}`}>
                 {
@@ -45,7 +51,9 @@ export default (props) => {
           }
         </tbody>
       </Table>
-      <Pagination
+      {
+        data.length > 0 &&
+        <Pagination
           activePage={parseInt(page, 10)}
           itemsCountPerPage={parseInt(limit, 10)}
           totalItemsCount={parseInt(count, 10)}
@@ -53,6 +61,7 @@ export default (props) => {
           onChange={onChangePage}
           itemClass="page-item"
           linkClass="page-link" />
+      }
     </Fragment>
   );
 };
