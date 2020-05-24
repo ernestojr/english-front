@@ -43,14 +43,32 @@ const PhaseDetail = (props) => {
     props.getPhaseById(phaseId);
     props.getPractices({ phaseId });
   }, []);
-  const onSubmitEditPhase = async (e) => {
+  /* Phase envets */
+  const onButtonClickEditPhase = () => {
+    setPhase(props.phase);
+    showModalFrom(true);
+  }
+  const onChangePhase = key => event => {
+    setPhase({ ...phase, [key]: event.target.value });
+  }
+  const onSubmitPhase = async (e) => {
     e.preventDefault();
     await props.updatePhaseById(phase._id, {...pick(phase, ['name', 'description'])});
     showModalFrom(false);
-    setPhase(PHASE_DEFAULT);
     props.getPhaseById(phaseId);
   };
-  const onSubmit = async (e) => {
+  /* Practice envets */
+  const onButtonClickPractice = () => {
+    showForm(true);
+  }
+  const onChangePractice = key => event => {
+    setPractice({ ...practice, [key]: event.target.value });
+  }
+  const onCancelClickPractice = () => {
+    showForm(false);
+    setPractice(PRACTICE_DEFAULT);
+  }
+  const onSubmitPractice = async (e) => {
     e.preventDefault();
     if (practice._id) {
       await props.updatePracticeById(practice._id, {...pick(practice, ['content', 'type'])});
@@ -61,11 +79,11 @@ const PhaseDetail = (props) => {
     setPractice(PRACTICE_DEFAULT);
     props.getPractices({ phaseId });
   }
-  const updatePractice = (item) => async () => {
+  const onClickUpdatePractice = (item) => async () => {
     setPractice(item);
     showForm(true);
   };
-  const deletePractice = (item) => async () => {
+  const onClickDeletePractice = (item) => async () => {
     const title = 'Confirmación';
     const content = (<p>{'Are you sure you want to delete the practice?'}</p>);
     const opts = {
@@ -80,31 +98,16 @@ const PhaseDetail = (props) => {
   const getActions = (item) => {
     return (
       <Fragment>
-        <Button className="mr-2" outline color="primary" size="sm" onClick={updatePractice(item)}>Update</Button>
-        <Button outline color="danger" size="sm" onClick={deletePractice(item)}>Delete</Button>
+        <Button className="mr-2" outline color="primary" size="sm" onClick={onClickUpdatePractice(item)}>Update</Button>
+        <Button outline color="danger" size="sm" onClick={onClickDeletePractice(item)}>Delete</Button>
       </Fragment>
     );
   }
-  const onButtonClick = () => {
-    showForm(true);
-  }
-  const onButtonClickEditPhase = () => {
-    setPhase(props.phase);
-    showModalFrom(true);
-  }
-  const onChangePhase = key => event => {
-    setPhase({ ...phase, [key]: event.target.value });
-  }
-  const onChange = key => event => {
-    setPractice({ ...practice, [key]: event.target.value });
-  }
-  const onCancelClick = () => {
-    showForm(false);
-    setPractice(PRACTICE_DEFAULT);
-  }
+  /* Table */
   const onChangePage = page => {
     props.getPractices({ phaseId, page });
   }
+  const data = useMemo(() => props.practices, [props.practices]);
   const headers = useMemo(
     () => [
       {
@@ -133,6 +136,7 @@ const PhaseDetail = (props) => {
     ],
     [],
   );
+  /* Various */
   const moduleName = get(props, 'module.name', '');
   const phaseName = get(props, 'phase.name', '');
   const phaseDescription = get(props, 'phase.description', '');
@@ -149,7 +153,6 @@ const PhaseDetail = (props) => {
       text: phaseName,
     },
   ];
-  const data = useMemo(() => props.practices, [props.practices]);
   return (
     <Base breadcrumbs={breadcrumbs}>
       <Container>
@@ -160,15 +163,15 @@ const PhaseDetail = (props) => {
               buttonTextEdit="Edit Phase"
               onButtonClickEdit={onButtonClickEditPhase}
               buttonTextNew="New Practice"
-              onButtonClickNew={onButtonClick} />
+              onButtonClickNew={onButtonClickPractice} />
             <p>{phaseDescription}</p>
             {
               isOpen &&
               <PracticeForm
-                onSubmit={onSubmit}
+                onSubmit={onSubmitPractice}
                 value={practice}
-                onChange={onChange}
-                onCancelClick={onCancelClick}/>
+                onChange={onChangePractice}
+                onCancelClick={onCancelClickPractice}/>
             }
             <Table
               headers={headers}
@@ -177,9 +180,9 @@ const PhaseDetail = (props) => {
               {...pick(props, ['page', 'count', 'limit'])} />
             <DialogForm
               isOpen={isOpenModal}
-              title="New Phase"
+              title="Update Phase"
               toggle={() => showModalFrom(false)}
-              onSubmit={onSubmitEditPhase}>
+              onSubmit={onSubmitPhase}>
               <PhaseForm value={phase} onChange={onChangePhase}/>
             </DialogForm>
           </Col>

@@ -16,40 +16,59 @@ import HeaderPage from '../../components/HeaderPage';
 import DialogForm from '../../components/DialogForm';
 import Base from '../../layouts/Base';
 import PhaseForm from './PhaseForm';
+import ModuleForm from '../Modules/ModuleForm';
 
 import {
   addPhase,
   getPhases,
   getModuleById,
+  updateModuleById,
   deletePhaseById,
   showDialog,
 } from '../../redux/actions';
 
-const PHASE_DEFAULT = { name: '', description: '' };
+const STATE_DEFAULT = { name: '', description: '' };
 
 const ModuleDetail = (props) => {
-  const [phase, setPhase] = useState(PHASE_DEFAULT);
-  const [isOpen, showModalFrom] = useState(false);
+  const [phase, setPhase] = useState(STATE_DEFAULT);
+  const [module, setModule] = useState(STATE_DEFAULT);
+  const [isOpenPhaseDialog, showPhaseDialog] = useState(false);
+  const [isOpenModuleDialog, showModuleDialog] = useState(false);
   const history = useHistory();
   const { moduleId } = useParams();
   useEffect(() => {
     props.getModuleById(moduleId);
     props.getPhases({ moduleId });
   }, []);
-  const onChange = key => event => {
+  /* Module events */
+  const onChangeMudule = key => event => {
+    setModule({ ...module, [key]: event.target.value });
+  }
+  const onButtonClickEditModule = () => {
+    setModule(props.module);
+    showModuleDialog(true);
+  }
+  const onSubmitModule = async (event) => {
+    event.preventDefault();
+    await props.updateModuleById(module._id, {...pick(module, ['name', 'description'])});
+    showModuleDialog(false);
+    props.getModuleById(moduleId);
+  }
+  /* Phase events */
+  const onChangePhase = key => event => {
     setPhase({ ...phase, [key]: event.target.value  });
   }
-  const onButtonClick = () => {
-    showModalFrom(true);
+  const onButtonClickPhase = () => {
+    showPhaseDialog(true);
   }
-  const onSubmit = async (event) => {
+  const onSubmitPhase = async (event) => {
     event.preventDefault();
     await props.addPhase({ ...phase, moduleId });
-    setPhase(PHASE_DEFAULT);
-    showModalFrom(false);
+    setPhase(STATE_DEFAULT);
+    showPhaseDialog(false);
     props.getPhases({ moduleId });
   };
-  const deletePhase = (item) => () => {
+  const onClickDeletePhase = (item) => () => {
     const title = 'Confirmación';
     const content = (<p>{'Are you sure you want to delete the phase?'}</p>);
     const opts = {
@@ -61,17 +80,18 @@ const ModuleDetail = (props) => {
     };
     props.showDialog(title, content, opts);
   }
-  const showPhaseDetail = (item) => () => {
+  const onClickShowPhaseDetail = (item) => () => {
     history.push(`/modules/${moduleId}/phases/${item._id}`);
   }
   const getActions = (item) => {
     return (
       <Fragment>
-        <Button className="mr-2" outline color="primary" size="sm" onClick={showPhaseDetail(item)}>Practices</Button>
-        <Button className="mr-2" outline color="danger" size="sm" onClick={deletePhase(item)}>Delete</Button>
+        <Button className="mr-2" outline color="primary" size="sm" onClick={onClickShowPhaseDetail(item)}>Practices</Button>
+        <Button className="mr-2" outline color="danger" size="sm" onClick={onClickDeletePhase(item)}>Delete</Button>
       </Fragment>
     );
   }
+  /* Table */
   const onChangePage = page => {
     props.getPhases({ moduleId, page });
   }
@@ -122,8 +142,10 @@ const ModuleDetail = (props) => {
           <Col>
             <HeaderPage
               headerText={`Modules ${moduleName}`}
+              buttonTextEdit="Edit Module"
+              onButtonClickEdit={onButtonClickEditModule}
               buttonTextNew="New Phase"
-              onButtonClickNew={onButtonClick} />
+              onButtonClickNew={onButtonClickPhase} />
             <p>{moduleDescription}</p>
             <Table
               headers={headers}
@@ -131,11 +153,18 @@ const ModuleDetail = (props) => {
               onChangePage={onChangePage}
               {...pick(props, ['page', 'count', 'limit'])} />
             <DialogForm
-              isOpen={isOpen}
+              isOpen={isOpenPhaseDialog}
               title="New Phase"
-              toggle={() => showModalFrom(false)}
-              onSubmit={onSubmit}>
-              <PhaseForm value={phase} onChange={onChange}/>
+              toggle={() => showPhaseDialog(false)}
+              onSubmit={onSubmitPhase}>
+              <PhaseForm value={phase} onChange={onChangePhase}/>
+            </DialogForm>
+            <DialogForm
+              isOpen={isOpenModuleDialog}
+              title="Update Module"
+              toggle={() => showModuleDialog(false)}
+              onSubmit={onSubmitModule}>
+              <ModuleForm value={module} onChange={onChangeMudule}/>
             </DialogForm>
           </Col>
         </Row>
@@ -153,6 +182,7 @@ const mapDispatchToProps = {
   addPhase,
   getPhases,
   getModuleById,
+  updateModuleById,
   deletePhaseById,
   showDialog,
 };
