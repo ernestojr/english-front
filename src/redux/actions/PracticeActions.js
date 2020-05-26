@@ -8,6 +8,10 @@ import {
     deletePracticeById as deleteById,
 } from '../../api/practice';
 
+export const cleanStorePractice = () => async (dispatch) => {
+    dispatch({ type: PRACTICE.CLEAR });
+}
+
 export const addPractice = (body) => async (dispatch) => {
     dispatch({ type: PRACTICE.ADD });
     try {

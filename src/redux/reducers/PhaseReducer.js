@@ -29,6 +29,8 @@ export default function (state = initialState, action) {
             return updateById(state, action.payload);
         case PHASE.DELETE_BY_ID:
             return deleteById(state, action.payload);
+        case PHASE.CLEAR:
+            return initialState;
         default:
             return state;
     }

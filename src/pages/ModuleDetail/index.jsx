@@ -24,6 +24,7 @@ import {
   getModuleById,
   updateModuleById,
   deletePhaseById,
+  cleanStorePhase,
   showDialog,
 } from '../../redux/actions';
 
@@ -36,10 +37,23 @@ const ModuleDetail = (props) => {
   const [isOpenModuleDialog, showModuleDialog] = useState(false);
   const history = useHistory();
   const { moduleId } = useParams();
+  const {
+    getModuleById,
+    getPhases,
+    cleanStorePhase,
+  } = props;
   useEffect(() => {
-    props.getModuleById(moduleId);
-    props.getPhases({ moduleId });
-  }, []);
+    getModuleById(moduleId);
+    getPhases({ moduleId });
+    return () => {
+      cleanStorePhase();
+    }
+  }, [
+    moduleId,
+    getModuleById,
+    getPhases,
+    cleanStorePhase,
+  ]);
   /* Module events */
   const onChangeMudule = key => event => {
     setModule({ ...module, [key]: event.target.value });
@@ -135,6 +149,7 @@ const ModuleDetail = (props) => {
     },
   ];
   const data = useMemo(() => props.phases, [props.phases]);
+  const isLoading = get(props, 'getting', false);
   return (
     <Base breadcrumbs={breadcrumbs}>
       <Container>
@@ -148,6 +163,7 @@ const ModuleDetail = (props) => {
               onButtonClickNew={onButtonClickPhase} />
             <p>{moduleDescription}</p>
             <Table
+              isLoading={isLoading}
               headers={headers}
               data={data}
               onChangePage={onChangePage}
@@ -184,6 +200,7 @@ const mapDispatchToProps = {
   getModuleById,
   updateModuleById,
   deletePhaseById,
+  cleanStorePhase,
   showDialog,
 };
 

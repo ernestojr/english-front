@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import {
   Table,
+  Progress,
 } from 'reactstrap';
 import map from 'lodash/map';
 import Pagination from "react-js-pagination";
@@ -20,6 +21,7 @@ export default (props) => {
     onChangePage,
     headers = [],
     data = [],
+    isLoading = false,
   } = props;
   return (
     <Fragment>
@@ -33,12 +35,22 @@ export default (props) => {
         </thead>
         <tbody>
           {
-            !data.length &&
+            isLoading &&
             <tr>
-              <td className="text-center" colspan="5">Nothing yet</td>
+              <td className="text-center" colSpan="5">
+                <p>Loading...</p>
+                <Progress animated value="100" />
+              </td>
             </tr>
           }
           {
+            !isLoading && !data.length &&
+            <tr>
+              <td className="text-center" colSpan="5">Nothing yet</td>
+            </tr>
+          }
+          {
+            !isLoading &&
             map(data, (item, index) => (
               <tr key={`${Date.now()}-${index}`}>
                 {

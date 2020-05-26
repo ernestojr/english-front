@@ -5,6 +5,7 @@ export const MODULE = {
     GET_BY_ID: 'MODULE/GET_BY_ID',
     UPDATE_BY_ID: 'MODULE/UPDATE_BY_ID',
     DELETE_BY_ID: 'MODULE/DELETE_BY_ID',
+    CLEAR: 'MODULE/CLEAR',
 };
 
 export const PHASE = {
@@ -13,6 +14,7 @@ export const PHASE = {
     GET_BY_ID: 'PHASE/GET_BY_ID',
     UPDATE_BY_ID: 'PHASE/UPDATE_BY_ID',
     DELETE_BY_ID: 'PHASE/DELETE_BY_ID',
+    CLEAR: 'PHASE/CLEAR',
 };
 
 export const PRACTICE = {
@@ -21,6 +23,7 @@ export const PRACTICE = {
     GET_BY_ID: 'PRACTICE/GET_BY_ID',
     UPDATE_BY_ID: 'PRACTICE/UPDATE_BY_ID',
     DELETE_BY_ID: 'PRACTICE/DELETE_BY_ID',
+    CLEAR: 'PRACTICE/CLEAR',
 };
 
 export const COMMON = {

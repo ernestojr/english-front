@@ -8,6 +8,10 @@ import {
     deleteModuleById as deleteById,
 } from '../../api/module';
 
+export const cleanStoreModule = () => async (dispatch) => {
+    dispatch({ type: MODULE.CLEAR });
+}
+
 export const addModule = (body) => async (dispatch) => {
     dispatch({ type: MODULE.ADD });
     try {

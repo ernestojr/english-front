@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 import pick from 'lodash/pick';
+import get from 'lodash/get';
 import {
   Container,
   Row,
@@ -20,6 +21,7 @@ import {
   addModule,
   getModules,
   deleteModuleById,
+  cleanStoreModule,
   showDialog,
 } from '../../redux/actions';
 
@@ -29,9 +31,20 @@ const Module = (props) => {
   const [module, setModule] = useState(MODULE_DEFAULT);
   const [isOpen, showModalFrom] = useState(false);
   const history = useHistory();
+  const {
+    modules,
+    getModules,
+    cleanStoreModule,
+  } = props;
   useEffect(() => {
-    props.getModules();
-  }, []);
+    getModules();
+    return () => {
+      cleanStoreModule();
+    }
+  }, [
+    getModules,
+    cleanStoreModule,
+  ]);
   const onChange = key => event => {
     setModule({ ...module, [key]: event.target.value  });
   }
@@ -104,7 +117,8 @@ const Module = (props) => {
       text: 'Modules',
     },
   ];
-  const data = useMemo(() => props.modules, [props.modules]);
+  const data = useMemo(() => modules, [modules]);
+  const isLoading = get(props, 'getting', false);
   return (
 		<Base breadcrumbs={breadcrumbs}>
       <Container>
@@ -117,6 +131,7 @@ const Module = (props) => {
             />
             <Table
               headers={headers}
+              isLoading={isLoading}
               data={data}
               onChangePage={onChangePage}
               {...pick(props, ['page', 'count', 'limit'])} />
@@ -143,6 +158,7 @@ const mapDispatchToProps = {
   addModule,
   getModules,
   deleteModuleById,
+  cleanStoreModule,
   showDialog,
 };
 

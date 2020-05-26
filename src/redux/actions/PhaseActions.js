@@ -8,6 +8,10 @@ import {
     deletePhaseById as deleteById,
 } from '../../api/phase';
 
+export const cleanStorePhase = () => async (dispatch) => {
+    dispatch({ type: PHASE.CLEAR });
+}
+
 export const addPhase = (body) => async (dispatch) => {
     dispatch({ type: PHASE.ADD });
     try {

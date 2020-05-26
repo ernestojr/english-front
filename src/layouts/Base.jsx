@@ -26,7 +26,12 @@ const Base = props => {
           <Nav className="mr-auto" navbar>
 						<Menu />
           </Nav>
-					<NavbarText><a href="https://github.com/ernestojr">GitHub</a></NavbarText>
+					<NavbarText>
+						<a
+							href="https://github.com/ernestojr"
+							target="_blank"
+							rel="noopener noreferrer">GitHub</a>
+					</NavbarText>
         </Collapse>
       </Navbar>
 			{

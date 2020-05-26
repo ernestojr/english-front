@@ -26,6 +26,7 @@ import {
   updatePhaseById,
   updatePracticeById,
   deletePracticeById,
+  cleanStorePractice,
   showDialog,
 } from '../../redux/actions';
 
@@ -38,11 +39,27 @@ const PhaseDetail = (props) => {
   const [isOpen, showForm] = useState(false);
   const [isOpenModal, showModalFrom] = useState(false);
   const { moduleId, phaseId } = useParams();
+  const {
+    getModuleById,
+    getPhaseById,
+    getPractices,
+    cleanStorePractice,
+  } = props;
   useEffect(() => {
-    props.getModuleById(moduleId);
-    props.getPhaseById(phaseId);
-    props.getPractices({ phaseId });
-  }, []);
+    getModuleById(moduleId);
+    getPhaseById(phaseId);
+    getPractices({ phaseId });
+    return () => {
+      cleanStorePractice();
+    }
+  }, [
+    moduleId,
+    phaseId,
+    getModuleById,
+    getPhaseById,
+    getPractices,
+    cleanStorePractice,
+  ]);
   /* Phase envets */
   const onButtonClickEditPhase = () => {
     setPhase(props.phase);
@@ -108,6 +125,7 @@ const PhaseDetail = (props) => {
     props.getPractices({ phaseId, page });
   }
   const data = useMemo(() => props.practices, [props.practices]);
+  const isLoading = get(props, 'getting', false);
   const headers = useMemo(
     () => [
       {
@@ -174,6 +192,7 @@ const PhaseDetail = (props) => {
                 onCancelClick={onCancelClickPractice}/>
             }
             <Table
+              isLoading={isLoading}
               headers={headers}
               data={data}
               onChangePage={onChangePage}
@@ -206,6 +225,7 @@ const mapDispatchToProps = {
   updatePhaseById,
   updatePracticeById,
   deletePracticeById,
+  cleanStorePractice,
   showDialog,
 };
 
