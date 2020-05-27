@@ -8,12 +8,8 @@ import {
   Input,
   Button,
 } from 'reactstrap';
-
-const TYPE_OPTIONS = [
-  { value: 'simple', text: 'Simple' },
-  { value: 'question', text: 'Question' },
-  { value: 'answer', text: 'Answer' },
-];
+import map from 'lodash/map';
+import { TYPES_PRACTICE } from '../../constants/ui';
 
 export default (props) => {
   return (
@@ -30,6 +26,8 @@ export default (props) => {
               value={props.value.content}
               required
               onChange={props.onChange('content')}
+              autoFocus
+              autoComplete="off"
             />
           </FormGroup>
         </Col>
@@ -45,7 +43,7 @@ export default (props) => {
               onChange={props.onChange('type')}
             >
               {
-                TYPE_OPTIONS.map((opt, index) => <option key={Date.now() + index} value={opt.value}>{opt.text}</option>)
+                map(TYPES_PRACTICE, (value, key) => <option key={`${Date.now()}-${key}`} value={key}>{value}</option>)
               }
             </Input>
           </FormGroup>

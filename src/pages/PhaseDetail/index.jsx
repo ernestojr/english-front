@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import get from 'lodash/get';
 import pick from 'lodash/pick';
+import includes from 'lodash/includes';
 import {
   Container,
   Row,
@@ -17,6 +18,7 @@ import DialogForm from '../../components/DialogForm';
 import Base from '../../layouts/Base';
 import PracticeForm from './PracticeForm';
 import PhaseForm from '../ModuleDetail/PhaseForm';
+import { TYPES_PRACTICE } from '../../constants/ui';
 
 import {
   addPractice,
@@ -79,7 +81,12 @@ const PhaseDetail = (props) => {
     showForm(true);
   }
   const onChangePractice = key => event => {
-    setPractice({ ...practice, [key]: event.target.value });
+    const { value } = event.target;
+    let fields = {};
+    if (key === 'content' && includes(value, '?')) {
+      fields = { type: 'question' };
+    }
+    setPractice({ ...practice, [key]: value, ...fields });
   }
   const onCancelClickPractice = () => {
     showForm(false);
@@ -134,7 +141,8 @@ const PhaseDetail = (props) => {
       },
       {
         title: 'Type',
-        accessor: 'type',
+        key: 'type',
+        accessor: (item) => TYPES_PRACTICE[item.type],
       },
       {
         title: 'Created At',
