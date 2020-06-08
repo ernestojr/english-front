@@ -23,7 +23,8 @@ export default (props) => {
     data = [],
     isLoading = false,
   } = props;
-  const showPagination = page && limit && count && data.length > 0;
+  const showPagination = !!page && !!limit && !!count && (data.length > 0);
+  console.log('showPagination', showPagination);
   return (
     <Fragment>
       <Table striped bordered responsive>
