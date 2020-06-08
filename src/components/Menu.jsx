@@ -12,6 +12,9 @@ const Menu = () => (
 		<NavItem>
 			<Link className="nav-link" to='/modules'>Modules</Link>
 		</NavItem>
+		<NavItem>
+			<Link className="nav-link" to='/numbers'>Numbers</Link>
+		</NavItem>
 	</Fragment>
 );
 

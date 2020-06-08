@@ -23,6 +23,7 @@ export default (props) => {
     data = [],
     isLoading = false,
   } = props;
+  const showPagination = page && limit && count && data.length > 0;
   return (
     <Fragment>
       <Table striped bordered responsive>
@@ -64,7 +65,7 @@ export default (props) => {
         </tbody>
       </Table>
       {
-        data.length > 0 &&
+        showPagination &&
         <Pagination
           activePage={parseInt(page, 10)}
           itemsCountPerPage={parseInt(limit, 10)}
