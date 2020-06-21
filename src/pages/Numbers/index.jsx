@@ -15,7 +15,7 @@ import {
   showDialog,
 } from '../../redux/actions';
 
-import NUMBERS from '../../constants/numbers.json'
+import NUMBERS from '../../constants/numbers.json';
 
 const Numbers = () => {
   const [isOpen, showModalFrom] = useState(false);

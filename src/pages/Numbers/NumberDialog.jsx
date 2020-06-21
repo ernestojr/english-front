@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NTW from 'number-to-words';
 import {
   Modal,
@@ -37,6 +37,12 @@ export default (props) => {
   const [state, setNumber] = useState(generatePractice(between.min, between.max));
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [settingOpen, setSettingOpen] = useState(false);
+  useEffect(() => {
+    const min = parseInt(localStorage.getItem('min') || 0, 10);
+    const max = parseInt(localStorage.getItem('max') || 100, 10);
+    setBetween({ min, max });
+    setNumber(generatePractice(min, max));
+  }, []);
   const onClickSetting = () => setSettingOpen(!settingOpen);
   const onChange = key => event => {
     const { value } = event.target;
@@ -45,10 +51,14 @@ export default (props) => {
       [`${key}Error`]: value.trim().toLowerCase() !== state[`${key}Correct`],
       [key]: value,
     };
-    
     setNumber(newState);
   }
   const onClickOther = () => setNumber(generatePractice(between.min, between.max));
+  const onChangeLimit = key => ({ target: { value } }) => {
+    const limit = parseInt(value || 0, 10);
+    localStorage.setItem(key, limit);
+    setBetween({ ...between, [key]: limit });
+  };
   const help = `${state.cardinalCorrect}/${state.ordinalCorrect}`;
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
@@ -98,7 +108,7 @@ export default (props) => {
                     name="number-min"
                     id="number-min"
                     value={between.min}
-                    onChange={({ target: { value }}) => setBetween({ ...between, min: parseInt(value || 0, 10) })}
+                    onChange={onChangeLimit('min')}
                   />
                 </FormGroup>
                 <FormGroup>
@@ -108,7 +118,7 @@ export default (props) => {
                     name="number-max"
                     id="number-max"
                     value={between.max}
-                    onChange={({ target: { value }}) => setBetween({ ...between, max: parseInt(value || 0, 10) })}
+                    onChange={onChangeLimit('max')}
                   />
                 </FormGroup>
               </CardBody>
