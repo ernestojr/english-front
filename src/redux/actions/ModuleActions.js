@@ -6,7 +6,7 @@ import {
     getModuleById as getById,
     updateModuleById as updateById,
     deleteModuleById as deleteById,
-} from '../../api/module';
+} from '../../api';
 
 export const cleanStoreModule = () => async (dispatch) => {
     dispatch({ type: MODULE.CLEAR });

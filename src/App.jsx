@@ -10,6 +10,7 @@ import Modules from './pages/Modules';
 import ModuleDetail from './pages/ModuleDetail';
 import PhaseDetail from './pages/PhaseDetail';
 import Numbers from './pages/Numbers';
+import Words from './pages/Words';
 import Dialogs from './components/Dialogs';
 
 export default () => {
@@ -18,6 +19,9 @@ export default () => {
       <Switch>
         <Route exact path="/">
           <Home />
+        </Route>
+        <Route exact path="/words">
+          <Words />
         </Route>
         <Route exact path="/numbers">
           <Numbers />

@@ -24,7 +24,7 @@ export default (props) => {
     isLoading = false,
   } = props;
   const showPagination = !!page && !!limit && !!count && (data.length > 0);
-  console.log('showPagination', showPagination);
+  const colNumb = headers.length;
   return (
     <Fragment>
       <Table striped bordered responsive>
@@ -39,7 +39,7 @@ export default (props) => {
           {
             isLoading &&
             <tr>
-              <td className="text-center" colSpan="5">
+              <td className="text-center" colSpan={colNumb}>
                 <p>Loading...</p>
                 <Progress animated value="100" />
               </td>
@@ -48,7 +48,7 @@ export default (props) => {
           {
             !isLoading && !data.length &&
             <tr>
-              <td className="text-center" colSpan="5">Nothing yet</td>
+              <td className="text-center" colSpan={colNumb}>Nothing yet</td>
             </tr>
           }
           {

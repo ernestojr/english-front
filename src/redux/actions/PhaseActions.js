@@ -6,7 +6,7 @@ import {
     getPhaseById as getById,
     updatePhaseById as updateById,
     deletePhaseById as deleteById,
-} from '../../api/phase';
+} from '../../api';
 
 export const cleanStorePhase = () => async (dispatch) => {
     dispatch({ type: PHASE.CLEAR });

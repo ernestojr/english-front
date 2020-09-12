@@ -6,7 +6,7 @@ import {
     getPracticeById as getById,
     updatePracticeById as updateById,
     deletePracticeById as deleteById,
-} from '../../api/practice';
+} from '../../api';
 
 export const cleanStorePractice = () => async (dispatch) => {
     dispatch({ type: PRACTICE.CLEAR });
