@@ -6,10 +6,10 @@ import {
 
 export default (props) => (
   <Row className="mb-3">
-    <Col md="8">
+    <Col md="8" xs="12">
       <h1 className="float-left">{props.headerText}</h1>
     </Col>
-    <Col md="2" xs="6">
+    <Col md="2" xs="12">
       {
         props.onButtonClickEdit &&
         <Button
@@ -19,7 +19,7 @@ export default (props) => (
           block>{props.buttonTextEdit}</Button> 
       }
     </Col>
-    <Col md="2" xs="6">
+    <Col md="2" xs="12">
       {
         props.onButtonClickNew &&
         <Button

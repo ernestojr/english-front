@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import QueryString from 'query-string';
 import moment from 'moment';
 import pick from 'lodash/pick';
 import get from 'lodash/get';
@@ -15,6 +17,7 @@ import {
 import Table from '../../components/Table';
 import HeaderPage from '../../components/HeaderPage';
 import DialogForm from '../../components/DialogForm';
+import SearchForm from '../../components/SearchForm';
 import Base from '../../layouts/Base';
 import WordForm from './WordForm';
 
@@ -36,21 +39,36 @@ const WORD_DEFAULT = {
   },
 };
 
+const filters = [
+  'search',
+  'page',
+  'limit',
+];
+
 const Word = (props) => {
   const [word, setWord] = useState(WORD_DEFAULT);
   const [isOpen, showModalFrom] = useState(false);
+  const history = useHistory();
   const {
-    words,
-    getWords,
+    addWord,
     cleanStoreWord,
+    deleteWordById,
+    getWords,
+    showDialog,
+    updateWordById,
+    words,
   } = props;
+  const currentQuery = QueryString.parse(history.location.search);
+  
   useEffect(() => {
-    getWords();
+    const query = QueryString.parse(history.location.search);
+    getWords(pick(query, filters));
     return () => {
       cleanStoreWord();
     }
   }, [
     getWords,
+    history,
     cleanStoreWord,
   ]);
   const onChange = key => event => {
@@ -73,13 +91,21 @@ const Word = (props) => {
   const onSubmit = async (event) => {
     event.preventDefault();
     if (word._id) {
-      await props.updateWordById(word._id, {...pick(word, ['value', 'metadata'])});
+      await updateWordById(word._id, {...pick(word, ['value', 'metadata'])});
     } else {
-      await props.addWord(word);
+      await addWord(word);
     }
     setWord(WORD_DEFAULT);
     showModalFrom(false);
-    props.getWords();
+    getWords();
+  };
+  const onSubmitSearch = async (search) => {
+    console.log('search', search);
+    const query = { ...currentQuery, search };
+    const path = `${history.location.pathname}?${QueryString.stringify(query)}`;
+    getWords(query);
+    console.log('path', path);
+    history.push(path);
   };
   const updateWord = (item) => () => {
     setWord(item);
@@ -90,16 +116,16 @@ const Word = (props) => {
     const content = (<p>{'Are you sure you want to delete the word?'}</p>);
     const opts = {
       onAccepted: () => {
-        props.deleteWordById(item._id, () => {
-          props.getWords();
+        deleteWordById(item._id, () => {
+          getWords(currentQuery);
         });
       },
     };
-    props.showDialog(title, content, opts);
+    showDialog(title, content, opts);
   }
   const onChangePage = page => {
-    props.getWords({ page });
-  }
+    getWords({ ...currentQuery, page });
+  };
   const getActions = (item) => {
     return (
       <Fragment>
@@ -107,7 +133,7 @@ const Word = (props) => {
         <Button className="mr-2" outline color="danger" size="sm" onClick={deleteWord(item)}>Delete</Button>
       </Fragment>
     );
-  }
+  };
   const headers = useMemo(
     () => [
       {
@@ -163,6 +189,9 @@ const Word = (props) => {
               headerText="Words"
               buttonTextNew="New Word"
               onButtonClickNew={onButtonClick}
+            />
+            <SearchForm
+              onSubmit={onSubmitSearch}
             />
             <Table
               headers={headers}
