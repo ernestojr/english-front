@@ -6,6 +6,7 @@ import {
     getWordById as getById,
     updateWordById as updateById,
     deleteWordById as deleteById,
+    practice,
 } from '../../api';
 
 export const cleanStoreWord = () => async (dispatch) => {
@@ -62,5 +63,18 @@ export const deleteWordById = (id, cb) => async (dispatch) => {
         }
     } catch (error) {
         dispatch({ type: WORD.DELETE_BY_ID, payload: { error } });
+    }
+}
+
+export const wordPractice = (count = 1, cb) => async (dispatch) => {
+    dispatch({ type: WORD.PRACTICE });
+    try {
+        const response = await practice(count);
+        dispatch({ type: WORD.PRACTICE, payload: { response } });
+        if(cb) {
+            cb(response.data);
+        }
+    } catch (error) {
+        dispatch({ type: WORD.PRACTICE, payload: { error } });
     }
 }

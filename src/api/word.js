@@ -21,3 +21,7 @@ export const updateWordById = (id, data) => {
 export const deleteWordById = (id) => {
     return API.delete(`/words/${id}`);
 }
+
+export const practice = (count = 1) => {
+  return API.get(`/words/practice?count=${count}`);
+}

@@ -10,10 +10,12 @@ const initialState = {
     count: 0,
     limit: 0,
     words: [],
+    wordsInPractice: [],
     adding: false,
     getting: false,
     updating: false,
     deleting: false,
+    practicing: false,
 };
 
 export default function (state = initialState, action) {
@@ -28,6 +30,8 @@ export default function (state = initialState, action) {
             return updateById(state, action.payload);
         case WORD.DELETE_BY_ID:
             return deleteById(state, action.payload);
+        case WORD.PRACTICE:
+            return practice(state, action.payload);
         case WORD.CLEAR:
             return initialState;
         default:
@@ -91,4 +95,19 @@ function deleteById(state, payload) {
         return { ...state, deleting: false };
     }
     return { ...state, deleting: true, error: null };
+}
+
+function practice(state, payload) {
+    if (payload) {
+        if (payload.error) {
+            return { ...state, practicing: false, error: payload.error };
+        }
+        const { data } = payload.response;
+        return {
+            ...state,
+            practicing: false,
+            wordsInPractice: data,
+        };
+    }
+    return { ...state, practicing: true, error: null };
 }

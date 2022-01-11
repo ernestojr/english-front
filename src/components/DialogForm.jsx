@@ -11,6 +11,8 @@ import {
 export default (props) => {
   const {
     children,
+    cancelButtonCaption = 'Cancel',
+    acceptButtonCaption = 'Accept',
     isOpen,
     title,
     toggle,
@@ -26,10 +28,10 @@ export default (props) => {
             <Button
               className="mr-2"
               color="secondary"
-              type="button" onClick={toggle}>Cancel</Button>
+              type="button" onClick={toggle}>{cancelButtonCaption}</Button>
             <Button
               color="primary"
-              type="submit">Accept</Button>
+              type="submit">{acceptButtonCaption}</Button>
           </ModalFooter>
         </Form>
       </Modal>

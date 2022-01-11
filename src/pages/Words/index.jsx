@@ -6,6 +6,7 @@ import moment from 'moment';
 import pick from 'lodash/pick';
 import get from 'lodash/get';
 import split from 'lodash/split';
+import last from 'lodash/last';
 import startsWith from 'lodash/startsWith';
 import {
   Container,
@@ -20,6 +21,7 @@ import DialogForm from '../../components/DialogForm';
 import SearchForm from '../../components/SearchForm';
 import Base from '../../layouts/Base';
 import WordForm from './WordForm';
+import WordPracticeForm from './WordPracticeForm';
 
 import {
   addWord,
@@ -28,6 +30,7 @@ import {
   deleteWordById,
   cleanStoreWord,
   showDialog,
+  wordPractice,
 } from '../../redux/actions';
 
 const WORD_DEFAULT = {
@@ -47,7 +50,14 @@ const filters = [
 
 const Word = (props) => {
   const [word, setWord] = useState(WORD_DEFAULT);
+  const [wordInPractice, setWordInPractice] = useState({
+    english: '',
+    spanish: '',
+    response: '',
+    isInvalid: false,
+  });
   const [isOpen, showModalFrom] = useState(false);
+  const [isOpenPractice, showPracticeModalFrom] = useState(false);
   const history = useHistory();
   const {
     addWord,
@@ -57,7 +67,13 @@ const Word = (props) => {
     showDialog,
     updateWordById,
     words,
+    practicing,
+    wordsInPractice,
+    wordPractice,
   } = props;
+  console.log('practicing', practicing);
+  console.log('wordsInPractice', wordsInPractice);
+  console.log('wordInPractice', wordInPractice);
   const currentQuery = QueryString.parse(history.location.search);
   
   useEffect(() => {
@@ -134,6 +150,41 @@ const Word = (props) => {
       </Fragment>
     );
   };
+  const onButtonClickPractice = () => {
+    wordPractice(1, (data) => {
+      if (data.length) {
+        const w = last(data);
+        // const isSpanish = Math.random() < 0.5;
+        setWordInPractice({
+          english: w.value,
+          spanish: w.metadata.spanish,
+          response: '',
+          isInvalid: false,
+        });
+      }
+      showPracticeModalFrom(true);
+    });
+  }
+  const onSubmitPractice = (event) => {
+    event.preventDefault();
+    const { english: targe, response } = wordInPractice;
+    if (response.length < targe.length ||
+      !targe.toLowerCase().includes(response.toLowerCase())) {
+      setWordInPractice({...wordInPractice, isInvalid: true });
+    }
+  }
+  const onChangeWordInPractice = (event) => {
+    setWordInPractice({
+      ...wordInPractice,
+      response: event.target.value,
+      isInvalid: false,
+    });
+  }
+
+  const onUpdateWord = () => {
+    onButtonClickPractice();
+  }
+  
   const headers = useMemo(
     () => [
       {
@@ -193,6 +244,16 @@ const Word = (props) => {
             <SearchForm
               onSubmit={onSubmitSearch}
             />
+            <Row>
+              <Col>
+                <Button
+                  className="mb-3"
+                  color="success"
+                  type="button"
+                  onClick={onButtonClickPractice}
+                  block>Practice</Button>
+              </Col>
+            </Row>
             <Table
               headers={headers}
               isLoading={isLoading}
@@ -205,6 +266,18 @@ const Word = (props) => {
               toggle={() => showModalFrom(false)}
               onSubmit={onSubmit}>
               <WordForm value={word} onChange={onChange}/>
+            </DialogForm>
+            <DialogForm
+              isOpen={isOpenPractice}
+              title="New Practice"
+              cancelButtonCaption="Close"
+              acceptButtonCaption="Evaluate"
+              toggle={() => showPracticeModalFrom(false)}
+              onSubmit={onSubmitPractice}>
+                <WordPracticeForm
+                  value={wordInPractice}
+                  onUpdateWord={onUpdateWord}
+                  onChange={onChangeWordInPractice} />
             </DialogForm>
           </Col>
         </Row>
@@ -225,6 +298,7 @@ const mapDispatchToProps = {
   deleteWordById,
   cleanStoreWord,
   showDialog,
+  wordPractice,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Word);
