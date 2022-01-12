@@ -36,6 +36,7 @@ export default (props) => {
           onChange={props.onChange('present')}
           invalid={props.value.statusInPresent === 'invalid'}
           valid={props.value.statusInPresent === 'valid'}
+          {...props.focusProps}
         />
       </FormGroup>
       <FormGroup>

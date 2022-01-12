@@ -57,12 +57,26 @@ const filters = [
   'limit',
 ];
 
+const useFocus = (initialFocus = false, id = "") => {
+  const [focus, setFocus] = useState(initialFocus)
+  const setFocusWithTrueDefault = (param) => setFocus(typeof param === 'boolean' ? param : true)
+  return ([
+      setFocusWithTrueDefault, {
+          autoFocus: focus,
+          key: `${id}${focus}`,
+          onFocus: () => setFocus(true),
+          onBlur: () => setFocus(false),
+      },
+  ])
+};
+
 const Word = (props) => {
   const [word, setWord] = useState(WORD_DEFAULT);
   const [wordInPractice, setWordInPractice] = useState(WORD_IN_PRACTICE_DEFAULT);
   const [isOpen, showModalFrom] = useState(false);
   const [isOpenPractice, showPracticeModalFrom] = useState(false);
   const history = useHistory();
+  const [setFocus, focusProps] = useFocus(true, 'target-in-present')
   const {
     addWord,
     cleanStoreWord,
@@ -169,8 +183,9 @@ const Word = (props) => {
           targetInPast: w.metadata.past,
           spanish: w.metadata.spanish,
         });
+        setFocus(true);
+        showPracticeModalFrom(true);
       }
-      showPracticeModalFrom(true);
     });
   }
 
@@ -296,6 +311,7 @@ const Word = (props) => {
               onSubmit={onSubmitPractice}>
                 <WordPracticeForm
                   value={wordInPractice}
+                  focusProps={focusProps}
                   onUpdateWord={onButtonClickPractice}
                   onChange={onChangeWordInPractice} />
             </DialogForm>
