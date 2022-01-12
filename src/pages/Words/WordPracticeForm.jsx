@@ -22,20 +22,34 @@ export default (props) => {
         target="number"
         toggle={() => setPopoverOpen(!popoverOpen)}>
         <PopoverHeader>Help</PopoverHeader>
-        <PopoverBody>{props.value.english}</PopoverBody>
+        <PopoverBody>{`${props.value.targetInPresent} - ${props.value.targetInPast}`}</PopoverBody>
       </Popover>
       <FormGroup>
-        <Label for="word-value">Response</Label>
+        <Label for="word-in-present">Response in present</Label>
         <Input
           type="text"
-          name="word-value"
-          id="word-value"
-          placeholder=""
-          value={props.value.response}
+          name="word-in-present"
+          id="word-in-present"
+          placeholder="Present"
+          value={props.value.responseInPresent}
           required
-          onChange={props.onChange}
-          invalid={props.value.isInvalid}
-          valid={!props.value.isInvalid}
+          onChange={props.onChange('present')}
+          invalid={props.value.statusInPresent === 'invalid'}
+          valid={props.value.statusInPresent === 'valid'}
+        />
+      </FormGroup>
+      <FormGroup>
+        <Label for="word-in-past">Response in past</Label>
+        <Input
+          type="text"
+          name="word-in-past"
+          id="word-in-past"
+          placeholder="Past"
+          value={props.value.responseInPast}
+          required
+          onChange={props.onChange('past')}
+          invalid={props.value.statusInPast === 'invalid'}
+          valid={props.value.statusInPast === 'valid'}
         />
       </FormGroup>
       <Row>

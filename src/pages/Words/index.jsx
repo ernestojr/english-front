@@ -42,6 +42,15 @@ const WORD_DEFAULT = {
   },
 };
 
+const WORD_IN_PRACTICE_DEFAULT = {
+  targetInPresent: '',
+  spanish: '',
+  responseInPresent: '',
+  responseInPast: '',
+  statusInPresent: 'none',
+  statusInPast: 'none',
+};
+
 const filters = [
   'search',
   'page',
@@ -50,12 +59,7 @@ const filters = [
 
 const Word = (props) => {
   const [word, setWord] = useState(WORD_DEFAULT);
-  const [wordInPractice, setWordInPractice] = useState({
-    english: '',
-    spanish: '',
-    response: '',
-    isInvalid: false,
-  });
+  const [wordInPractice, setWordInPractice] = useState(WORD_IN_PRACTICE_DEFAULT);
   const [isOpen, showModalFrom] = useState(false);
   const [isOpenPractice, showPracticeModalFrom] = useState(false);
   const history = useHistory();
@@ -67,13 +71,8 @@ const Word = (props) => {
     showDialog,
     updateWordById,
     words,
-    practicing,
-    wordsInPractice,
     wordPractice,
   } = props;
-  console.log('practicing', practicing);
-  console.log('wordsInPractice', wordsInPractice);
-  console.log('wordInPractice', wordInPractice);
   const currentQuery = QueryString.parse(history.location.search);
   
   useEffect(() => {
@@ -87,6 +86,7 @@ const Word = (props) => {
     history,
     cleanStoreWord,
   ]);
+
   const onChange = key => event => {
     if (startsWith(key, 'metadata.')) {
       const metadataKey = split(key, '.')[1];
@@ -101,9 +101,11 @@ const Word = (props) => {
       setWord({ ...word, [key]: event.target.value });
     }
   }
+
   const onButtonClick = () => {
     showModalFrom(true);
   }
+
   const onSubmit = async (event) => {
     event.preventDefault();
     if (word._id) {
@@ -115,6 +117,7 @@ const Word = (props) => {
     showModalFrom(false);
     getWords();
   };
+
   const onSubmitSearch = async (search) => {
     console.log('search', search);
     const query = { ...currentQuery, search };
@@ -123,10 +126,12 @@ const Word = (props) => {
     console.log('path', path);
     history.push(path);
   };
+
   const updateWord = (item) => () => {
     setWord(item);
     showModalFrom(true);
   };
+
   const deleteWord = (item) => () => {
     const title = 'Confirmación';
     const content = (<p>{'Are you sure you want to delete the word?'}</p>);
@@ -138,10 +143,12 @@ const Word = (props) => {
       },
     };
     showDialog(title, content, opts);
-  }
+  };
+
   const onChangePage = page => {
     getWords({ ...currentQuery, page });
   };
+
   const getActions = (item) => {
     return (
       <Fragment>
@@ -150,39 +157,53 @@ const Word = (props) => {
       </Fragment>
     );
   };
+
   const onButtonClickPractice = () => {
     wordPractice(1, (data) => {
       if (data.length) {
         const w = last(data);
         // const isSpanish = Math.random() < 0.5;
         setWordInPractice({
-          english: w.value,
+          ...WORD_IN_PRACTICE_DEFAULT,
+          targetInPresent: w.metadata.present,
+          targetInPast: w.metadata.past,
           spanish: w.metadata.spanish,
-          response: '',
-          isInvalid: false,
         });
       }
       showPracticeModalFrom(true);
     });
   }
+
   const onSubmitPractice = (event) => {
     event.preventDefault();
-    const { english: targe, response } = wordInPractice;
-    if (response.length < targe.length ||
-      !targe.toLowerCase().includes(response.toLowerCase())) {
-      setWordInPractice({...wordInPractice, isInvalid: true });
-    }
-  }
-  const onChangeWordInPractice = (event) => {
-    setWordInPractice({
+    const state = {
       ...wordInPractice,
-      response: event.target.value,
-      isInvalid: false,
-    });
+    };
+    const {
+      targetInPresent,
+      targetInPast,
+      responseInPresent,
+      responseInPast,
+    } = state;
+    state.statusInPresent = (responseInPresent.length < targetInPresent.length
+      || !targetInPresent.toLowerCase().includes(responseInPresent.toLowerCase())) ? 'invalid' : 'valid';
+    state.statusInPast = (responseInPast.length < targetInPast.length
+      || !targetInPast.toLowerCase().includes(responseInPast.toLowerCase())) ? 'invalid' : 'valid';
+    setWordInPractice(state);
   }
 
-  const onUpdateWord = () => {
-    onButtonClickPractice();
+  const onChangeWordInPractice = (key) => (event) => {
+    const state = {
+      ...wordInPractice,
+    };
+    if (key === 'present') {
+      state.responseInPresent = event.target.value;
+      state.statusInPresent = 'none';
+    } else {
+      state.responseInPast = event.target.value;
+      state.statusInPast = 'none';
+    }
+    setWordInPractice(state);
   }
   
   const headers = useMemo(
@@ -224,11 +245,13 @@ const Word = (props) => {
     ],
     [],
   );
+
   const breadcrumbs = [
     {
       text: 'Words',
     },
   ];
+
   const data = useMemo(() => words, [words]);
   const isLoading = get(props, 'getting', false);
   return (
@@ -276,7 +299,7 @@ const Word = (props) => {
               onSubmit={onSubmitPractice}>
                 <WordPracticeForm
                   value={wordInPractice}
-                  onUpdateWord={onUpdateWord}
+                  onUpdateWord={onButtonClickPractice}
                   onChange={onChangeWordInPractice} />
             </DialogForm>
           </Col>
