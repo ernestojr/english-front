@@ -206,45 +206,42 @@ const Word = (props) => {
     setWordInPractice(state);
   }
   
-  const headers = useMemo(
-    () => [
-      {
-        title: 'English',
-        accessor: 'value',
-      },
-      {
-        title: 'Spanish',
-        key: 'spanish',
-        accessor: (item) => get(item, 'metadata.spanish'),
-      },
-      {
-        title: 'Present',
-        key: 'present',
-        accessor: (item) => get(item, 'metadata.present'),
-      },
-      {
-        title: 'Past',
-        key: 'past',
-        accessor: (item) => get(item, 'metadata.past'),
-      },
-      {
-        title: 'Created At',
-        key: 'createdAt',
-        accessor: (item) => moment(item.createdAt).format('DD/MM/YYYY'),
-      },
-      {
-        title: 'Updated At',
-        key: 'updatedAt',
-        accessor: (item) => moment(item.updatedAt).format('DD/MM/YYYY'),
-      },
-      {
-        title: 'Actions',
-        key: 'actions',
-        accessor: (item) => getActions(item),
-      },
-    ],
-    [],
-  );
+  const headers = [
+    {
+      title: 'English',
+      accessor: 'value',
+    },
+    {
+      title: 'Spanish',
+      key: 'spanish',
+      accessor: (item) => get(item, 'metadata.spanish'),
+    },
+    {
+      title: 'Present',
+      key: 'present',
+      accessor: (item) => get(item, 'metadata.present'),
+    },
+    {
+      title: 'Past',
+      key: 'past',
+      accessor: (item) => get(item, 'metadata.past'),
+    },
+    {
+      title: 'Created At',
+      key: 'createdAt',
+      accessor: (item) => moment(item.createdAt).format('DD/MM/YYYY'),
+    },
+    {
+      title: 'Updated At',
+      key: 'updatedAt',
+      accessor: (item) => moment(item.updatedAt).format('DD/MM/YYYY'),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      accessor: (item) => getActions(item),
+    },
+  ];
 
   const breadcrumbs = [
     {

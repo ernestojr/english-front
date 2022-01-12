@@ -109,34 +109,31 @@ const ModuleDetail = (props) => {
   const onChangePage = page => {
     props.getPhases({ moduleId, page });
   }
-  const headers = useMemo(
-    () => [
-      {
-        title: 'Name',
-        accessor: 'name',
-      },
-      {
-        title: 'Description',
-        accessor: 'description',
-      },
-      {
-        title: 'Created At',
-        key: 'createdAt',
-        accessor: (item) => moment(item.createdAt).format('DD/MM/YYYY'),
-      },
-      {
-        title: 'Updated At',
-        key: 'updatedAt',
-        accessor: (item) => moment(item.updatedAt).format('DD/MM/YYYY'),
-      },
-      {
-        title: 'Actions',
-        key: 'actions',
-        accessor: (item) => getActions(item),
-      },
-    ],
-    [],
-  );
+  const headers = [
+    {
+      title: 'Name',
+      accessor: 'name',
+    },
+    {
+      title: 'Description',
+      accessor: 'description',
+    },
+    {
+      title: 'Created At',
+      key: 'createdAt',
+      accessor: (item) => moment(item.createdAt).format('DD/MM/YYYY'),
+    },
+    {
+      title: 'Updated At',
+      key: 'updatedAt',
+      accessor: (item) => moment(item.updatedAt).format('DD/MM/YYYY'),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      accessor: (item) => getActions(item),
+    },
+  ];
   const moduleName = get(props, 'module.name', '');
   const moduleDescription = get(props, 'module.description', '');
   const breadcrumbs = [

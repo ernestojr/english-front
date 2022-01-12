@@ -84,34 +84,31 @@ const Module = (props) => {
       </Fragment>
     );
   }
-  const headers = useMemo(
-    () => [
-      {
-        title: 'Name',
-        accessor: 'name',
-      },
-      {
-        title: 'Description',
-        accessor: 'description',
-      },
-      {
-        title: 'Created At',
-        key: 'createdAt',
-        accessor: (item) => moment(item.createdAt).format('DD/MM/YYYY'),
-      },
-      {
-        title: 'Updated At',
-        key: 'updatedAt',
-        accessor: (item) => moment(item.updatedAt).format('DD/MM/YYYY'),
-      },
-      {
-        title: 'Actions',
-        key: 'actions',
-        accessor: (item) => getActions(item),
-      },
-    ],
-    [],
-  );
+  const headers = [
+    {
+      title: 'Name',
+      accessor: 'name',
+    },
+    {
+      title: 'Description',
+      accessor: 'description',
+    },
+    {
+      title: 'Created At',
+      key: 'createdAt',
+      accessor: (item) => moment(item.createdAt).format('DD/MM/YYYY'),
+    },
+    {
+      title: 'Updated At',
+      key: 'updatedAt',
+      accessor: (item) => moment(item.updatedAt).format('DD/MM/YYYY'),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      accessor: (item) => getActions(item),
+    },
+  ];
   const breadcrumbs = [
     {
       text: 'Modules',

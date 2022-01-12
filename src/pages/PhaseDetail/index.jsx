@@ -133,35 +133,32 @@ const PhaseDetail = (props) => {
   }
   const data = useMemo(() => props.practices, [props.practices]);
   const isLoading = get(props, 'getting', false);
-  const headers = useMemo(
-    () => [
-      {
-        title: 'Text',
-        accessor: 'content',
-      },
-      {
-        title: 'Type',
-        key: 'type',
-        accessor: (item) => TYPES_PRACTICE[item.type],
-      },
-      {
-        title: 'Created At',
-        key: 'createdAt',
-        accessor: (item) => moment(item.createdAt).format('DD/MM/YYYY'),
-      },
-      {
-        title: 'Updated At',
-        key: 'updatedAt',
-        accessor: (item) => moment(item.updatedAt).format('DD/MM/YYYY'),
-      },
-      {
-        title: 'Actions',
-        key: 'actions',
-        accessor: (item) => getActions(item),
-      },
-    ],
-    [],
-  );
+  const headers = [
+    {
+      title: 'Text',
+      accessor: 'content',
+    },
+    {
+      title: 'Type',
+      key: 'type',
+      accessor: (item) => TYPES_PRACTICE[item.type],
+    },
+    {
+      title: 'Created At',
+      key: 'createdAt',
+      accessor: (item) => moment(item.createdAt).format('DD/MM/YYYY'),
+    },
+    {
+      title: 'Updated At',
+      key: 'updatedAt',
+      accessor: (item) => moment(item.updatedAt).format('DD/MM/YYYY'),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      accessor: (item) => getActions(item),
+    },
+  ];
   /* Various */
   const moduleName = get(props, 'module.name', '');
   const phaseName = get(props, 'phase.name', '');
