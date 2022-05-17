@@ -62,6 +62,20 @@ const PhaseDetail = (props) => {
     getPractices,
     cleanStorePractice,
   ]);
+  useEffect(() => {
+    const handlerKeyboardShorcuts = (event) => {
+      if (event.key.toLowerCase() === 'n') {
+        if (!isOpen) {
+          onButtonClickPractice();
+        }
+      }
+    };
+    window.addEventListener('keyup', handlerKeyboardShorcuts);
+    return () => {
+      window.removeEventListener('keyup', handlerKeyboardShorcuts);
+    };
+  }, [isOpen]);
+  console.log('isOpen', isOpen);
   /* Phase envets */
   const onButtonClickEditPhase = () => {
     setPhase(props.phase);
